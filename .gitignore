@@ -1,0 +1,6 @@
+x64/
+.vs/
+**.dSYM
+**.DS_Store
+*.h.gch
+build/
