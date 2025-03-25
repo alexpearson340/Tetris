@@ -6,39 +6,39 @@
 #include <SDL_ttf.h>
 #include <string>
 
-//Texture wrapper class
+// Texture wrapper class
 class Texture
 {
-	public:
-        Texture();
+public:
+    Texture();
 
-		Texture(SDL_Renderer*);
+    Texture(SDL_Renderer*);
 
-		Texture(SDL_Renderer*, TTF_Font*);
+    Texture(SDL_Renderer*, TTF_Font*);
 
-		~Texture();
+    ~Texture();
 
-		//Loads image at specified path
-		bool loadFromFile( const std::string & path );
+    // Loads image at specified path
+    bool loadFromFile(const std::string& path);
 
-		//Creates image from font string
-		bool loadFromRenderedText( std::string textureText, SDL_Color textColor, SDL_Color backgroundColour );
+    // Creates image from font string
+    bool loadFromRenderedText(std::string textureText, SDL_Color textColor, SDL_Color backgroundColour);
 
-		//Deallocates texture
-		void free();
-		
-		//Renders texture at given point
-		void render( int x, int y, SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE );
+    // Deallocates texture
+    void free();
 
-	private:
-		//The actual hardware texture
-		SDL_Texture* mTexture;
-        SDL_Renderer* mRenderer;
-		TTF_Font* mFont;
+    // Renders texture at given point
+    void render(int x, int y, SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
-		//Image dimensions
-		int mWidth;
-		int mHeight;
+private:
+    // The actual hardware texture
+    SDL_Texture* mTexture;
+    SDL_Renderer* mRenderer;
+    TTF_Font* mFont;
+
+    // Image dimensions
+    int mWidth;
+    int mHeight;
 };
 
 #endif

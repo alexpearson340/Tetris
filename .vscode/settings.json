@@ -1,4 +1,6 @@
 {
+    "editor.formatOnSave": true,
+    "clang-format.executable": "/opt/homebrew/opt/llvm/bin/clang-format",
     "files.associations": {
         "__locale": "cpp",
         "stdexcept": "cpp",
