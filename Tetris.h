@@ -1,31 +1,10 @@
 #ifndef TETRIS_H
 #define TETRIS_H
 
+#include "Constants.h"
 #include "Texture.h"
 #include <random>
 #include <sstream>
-
-// global constants
-const int BLOCK_SIZE = 40;
-const int VERTICAL_VELOCITY = 1;
-const int VERTICAL_FAST_VELOCITY = 3 * VERTICAL_VELOCITY;
-
-const int INPUT_INTERVAL_MS = 50;
-const int COMPLETED_ROW_FLASH_INTERVAL_MS = 100;
-
-const int N_ROWS = 22;
-const int N_COLS = 10;
-const int START_LINE = 2 * BLOCK_SIZE; // N_ROWS - 2 is playable
-const int BOTTOM_BAR_START = N_ROWS * BLOCK_SIZE;
-const int BOTTOM_BAR_HEIGHT = 24;
-const int SCREEN_WIDTH { BLOCK_SIZE * N_COLS };
-const int SCREEN_HEIGHT { (BLOCK_SIZE * N_ROWS) + BOTTOM_BAR_HEIGHT };
-const int TETRONIMO_START_X = 120;
-const int TETRONIMO_START_Y = 0;
-
-const int FONT_SIZE = 18;
-const SDL_Color TEXT_COLOUR { 0, 0, 0, 255 };
-const SDL_Color BACKGROUND_COLOUR { 250, 250, 250, 255 };
 
 // The Blocks that will move around on the screen
 class Block
