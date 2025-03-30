@@ -614,19 +614,20 @@ bool GameEngine::loadMedia()
     bool success = true;
 
     // Open the block textures
-    success = success && loadTexture(BLOCK_TEXTURE_RED, "assets/red.bmp");
-    success = success && loadTexture(BLOCK_TEXTURE_BLUE, "assets/blue.bmp");
-    success = success && loadTexture(BLOCK_TEXTURE_YELLOW, "assets/yellow.bmp");
-    success = success && loadTexture(BLOCK_TEXTURE_GREEN, "assets/green.bmp");
-    success = success && loadTexture(BLOCK_TEXTURE_PURPLE, "assets/purple.bmp");
-    success = success && loadTexture(BLOCK_TEXTURE_ORANGE, "assets/orange.bmp");
-    success = success && loadTexture(BLOCK_TEXTURE_NAVY, "assets/navy.bmp");
-    success = success && loadTexture(BLOCK_TEXTURE_GREY, "assets/grey.bmp");
-    success = success && loadTexture(BLOCK_TEXTURE_WHITE, "assets/white.bmp");
-    success = success && loadTexture(BLOCK_TEXTURE_BLACK, "assets/black.bmp");
+    success = success && loadTexture(BLOCK_TEXTURE_RED, "red.bmp");
+    success = success && loadTexture(BLOCK_TEXTURE_BLUE, "blue.bmp");
+    success = success && loadTexture(BLOCK_TEXTURE_YELLOW, "yellow.bmp");
+    success = success && loadTexture(BLOCK_TEXTURE_GREEN, "green.bmp");
+    success = success && loadTexture(BLOCK_TEXTURE_PURPLE, "purple.bmp");
+    success = success && loadTexture(BLOCK_TEXTURE_ORANGE, "orange.bmp");
+    success = success && loadTexture(BLOCK_TEXTURE_NAVY, "navy.bmp");
+    success = success && loadTexture(BLOCK_TEXTURE_GREY, "grey.bmp");
+    success = success && loadTexture(BLOCK_TEXTURE_WHITE, "white.bmp");
+    success = success && loadTexture(BLOCK_TEXTURE_BLACK, "black.bmp");
 
     // Open the font
-    mFont = TTF_OpenFont("assets/Arial.ttf", FONT_SIZE);
+    std::string fontPath { std::string(ASSETS_DIR) + "/" + "Arial.ttf" };
+    mFont = TTF_OpenFont(fontPath.c_str(), FONT_SIZE);
     if (mFont == NULL)
     {
         printf("Failed to load font! SDL_ttf Error: %s\n", TTF_GetError());
@@ -635,9 +636,10 @@ bool GameEngine::loadMedia()
     return success;
 }
 
-bool GameEngine::loadTexture(const int textureIndex, const std::string& filePath)
+bool GameEngine::loadTexture(const int textureIndex, const std::string& fileName)
 {
     bool success = true;
+    std::string filePath { std::string(ASSETS_DIR) + "/" + fileName };
     Texture texture { mRenderer };
     gTextures[textureIndex] = texture;
     if (!gTextures[textureIndex].loadFromFile(filePath))
