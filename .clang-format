@@ -1,3 +1,7 @@
 # Base style (choose: LLVM, Google, Chromium, Mozilla, WebKit, Microsoft, etc.)
 BasedOnStyle: WebKit
 BreakBeforeBraces: Allman
+
+# Ensure return type stays on the same line
+AlwaysBreakAfterReturnType: None
+AlwaysBreakAfterDefinitionReturnType: None
