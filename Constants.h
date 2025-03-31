@@ -25,4 +25,20 @@ constexpr int FONT_SIZE = 18;
 constexpr SDL_Color TEXT_COLOUR { 0, 0, 0, 255 };
 constexpr SDL_Color BACKGROUND_COLOUR { 250, 250, 250, 255 };
 
+// Different textures for blocks
+enum BlockTextures
+{
+    BLOCK_TEXTURE_RED,
+    BLOCK_TEXTURE_BLUE,
+    BLOCK_TEXTURE_YELLOW,
+    BLOCK_TEXTURE_GREEN,
+    BLOCK_TEXTURE_PURPLE,
+    BLOCK_TEXTURE_ORANGE,
+    BLOCK_TEXTURE_NAVY,
+    BLOCK_TEXTURE_GREY,
+    BLOCK_TEXTURE_WHITE,
+    BLOCK_TEXTURE_BLACK,
+    BLOCK_TEXTURE_TOTAL,
+};
+
 #endif // CONSTANTS_H

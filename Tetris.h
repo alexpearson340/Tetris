@@ -1,153 +1,18 @@
 #ifndef TETRIS_H
 #define TETRIS_H
 
+#include "Block.h"
+#include "CollisionHandler.h"
 #include "Constants.h"
+#include "Grid.h"
+#include "TetronimoFactory.h"
 #include "Texture.h"
 #include <random>
 #include <sstream>
 
-// The Blocks that will move around on the screen
-class Block
-{
-public:
-    // Default constructor
-    Block();
+// Container for all used Textures
+inline Texture gTextures[BLOCK_TEXTURE_TOTAL];
 
-    // Initializes the variables
-    Block(int, int, Texture*);
-
-    // Move by an amount
-    void move(int, int);
-
-    // Move to a location
-    void moveTo(int, int);
-
-    int getPosX();
-
-    int getPosY();
-
-    // Shows the Block on the screen
-    void render();
-
-    // Having virtual blocks to fill unoccupied Grid squares is easier
-    // than the handling required around std::optional<Block> in the Grid
-    bool exists();
-
-    Texture* getTexture();
-
-    void setTexture(Texture*);
-
-private:
-    // The X and Y offsets of the Block
-    int mPosX, mPosY;
-
-    // The texture associated with the block
-    Texture* mTexture;
-};
-
-// A class wrapping a 2D grid of Blocks.
-// The game board, as well as individual Tetronimos are
-// stored in a Grid. Provides rotating functionality
-class Grid
-{
-public:
-    Grid(int, int, size_t, size_t);
-
-    // Takes key presses and adjusts the Block's velocity
-    void handleEvent(SDL_Event& e);
-
-    void move(int, int);
-
-    void createBlock(int, int, Texture*);
-
-    Block& getBlock(int, int);
-    void rotateClockwise();
-    void rotateAntiClockwise();
-    void render();
-
-    int getHeight();
-
-    int getWidth();
-
-    int getPosX();
-
-    int getPosY();
-
-    bool shouldRotate();
-
-    void updatePositions();
-
-    void moveRowsDown(int, int);
-
-private:
-    // The X and Y offsets of the grid
-    int mPosX, mPosY;
-
-    // The velocity of the grid
-    int mVelX = 0;
-    int mVelY = VERTICAL_VELOCITY;
-    bool mRotate = false; // The user has pressed the rotate key and it should
-                          // rotate this frame
-
-    void transpose();
-
-    size_t mRows;
-    size_t mCols;
-    std::vector<std::vector<Block>> mGrid; // 2D vector of Blocks or nulls
-};
-
-// Provides a random Grid representing a Tetronimo on demand
-class TetronimoFactory
-{
-public:
-    TetronimoFactory();
-
-    Grid getNextTetronimo();
-
-private:
-    void setup();
-    std::mt19937 mGen; // Mersenne Twister generator
-    std::uniform_int_distribution<> mDis; // Uniform distribution
-    const int mTetronimoStartX { TETRONIMO_START_X };
-    const int mTetronimoStartY { TETRONIMO_START_Y };
-};
-
-// Handles the horizontal, rotational and vertical
-// collision scenarios, as well as freezing Tetronimos
-// when they stop moving, and deleting rows which the
-// players had completed
-class CollisionHandler
-{
-public:
-    CollisionHandler(SDL_Renderer*);
-
-    bool handle(Grid&, Grid&);
-
-    bool keepPlaying();
-
-private:
-    void handleHorizontal(Grid&, Grid&);
-
-    void handleRotational(Grid&, Grid&);
-
-    bool handleVertical(Grid&, Grid&);
-
-    void freezeTetronimo(Grid&, Grid&);
-
-    void handleCompletedRows(Grid&, Grid&);
-
-    bool checkForCompletedRow(int, Grid&);
-
-    void flashRows(std::vector<int>, Grid&, Texture*);
-
-    bool checkCollisions(Grid&, Grid&);
-
-    bool mKeepPlaying = true;
-    Uint32 mPreviousTime;
-    Uint32 mCurrentTime;
-
-    SDL_Renderer* mRenderer;
-};
 
 // The game engine class
 class GameEngine
@@ -174,8 +39,8 @@ private:
 
     // Game state classes
     Grid mGameBoard { 0, 0, 0, 0 };
-    TetronimoFactory mFactory;
-    CollisionHandler mCollisionHandler { nullptr };
+    TetronimoFactory mFactory { gTextures };
+    CollisionHandler mCollisionHandler { nullptr, nullptr, nullptr };
 
     // The window we'll be rendering to
     SDL_Window* mWindow = nullptr;

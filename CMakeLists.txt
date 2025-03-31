@@ -25,7 +25,11 @@ include_directories(
 # Add executable
 add_executable(main 
     main.cpp 
+    Block.cpp
+    CollisionHandler.cpp
+    Grid.cpp
     Tetris.cpp
+    TetronimoFactory.cpp
     Texture.cpp
 )
 
