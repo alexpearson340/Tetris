@@ -1,6 +1,7 @@
 add_executable(
   tetris_tests
   test_main.cpp
+  test_block.cpp
 )
 
 target_link_libraries(
