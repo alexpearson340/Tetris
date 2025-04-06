@@ -40,7 +40,7 @@ private:
     // Game state classes
     Grid mGameBoard { 0, 0, 0, 0 };
     TetronimoFactory mFactory { gTextures };
-    CollisionHandler mCollisionHandler { nullptr, nullptr, nullptr, 0 };
+    CollisionHandler mCollisionHandler { nullptr, nullptr, 0 };
 
     // The window we'll be rendering to
     SDL_Window* mWindow = nullptr;

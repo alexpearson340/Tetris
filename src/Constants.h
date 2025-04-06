@@ -10,6 +10,7 @@ constexpr int VERTICAL_FAST_VELOCITY = 3 * VERTICAL_VELOCITY;
 
 constexpr int INPUT_INTERVAL_MS = 50;
 constexpr int COMPLETED_ROW_FLASH_INTERVAL_MS = 100;
+constexpr int N_ROW_FLASHES = 4;
 
 constexpr int N_ROWS = 22;
 constexpr int N_COLS = 10;

@@ -186,7 +186,7 @@ int GameEngine::run(int argc, char* args[])
             mElapsedTime = SDL_GetTicks();
             mGameBoard = Grid(0, 0, N_ROWS, N_COLS);
             mGameBoard.updatePositions();
-            mCollisionHandler = CollisionHandler(mRenderer, &gTextures[BLOCK_TEXTURE_WHITE], &gTextures[BLOCK_TEXTURE_BLACK], mElapsedTime);
+            mCollisionHandler = CollisionHandler(&gTextures[BLOCK_TEXTURE_WHITE], &gTextures[BLOCK_TEXTURE_BLACK], mElapsedTime);
             Grid tetronimo = mFactory.getNextTetronimo();
 
             // While application is running

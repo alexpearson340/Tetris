@@ -1,9 +1,8 @@
 #include "CollisionHandler.h"
 
-CollisionHandler::CollisionHandler(SDL_Renderer* renderer, Texture* whiteFlashTexture, Texture* blackFlashTexture, uint32_t currentTime)
+CollisionHandler::CollisionHandler(Texture* whiteFlashTexture, Texture* blackFlashTexture, uint32_t currentTime)
     : mPreviousTime { 0 }
     , mCurrentTime { currentTime }
-    , mRenderer { renderer }
     , mWhiteFlashTexture { whiteFlashTexture }
     , mBlackFlashTexture { blackFlashTexture }
 {
@@ -16,8 +15,15 @@ bool CollisionHandler::keepPlaying()
 
 bool CollisionHandler::handle(Grid& tetronimo, Grid& gameBoard, uint32_t currentTime)
 {
-    // Cap horizontal movements and rotations to a certain frequency
     mCurrentTime = currentTime;
+
+    // If we are midway through animating a completed row, do this branch instead
+    if (mFinishedRowRoutine)
+    {
+        return animateCompletedRows(gameBoard);
+    }
+
+    // Cap horizontal movements and rotations to a certain frequency
     if ((mCurrentTime - mPreviousTime) >= INPUT_INTERVAL_MS)
     {
         mPreviousTime = mCurrentTime;
@@ -25,9 +31,8 @@ bool CollisionHandler::handle(Grid& tetronimo, Grid& gameBoard, uint32_t current
         handleRotational(tetronimo, gameBoard);
     }
 
-    // Move the block vertically
-    bool newTetronimoRequired { handleVertical(tetronimo, gameBoard) };
-    return newTetronimoRequired;
+    // Move the block vertically - return whether we need a new tetronimo
+    return handleVertical(tetronimo, gameBoard);
 }
 
 void CollisionHandler::handleHorizontal(Grid& tetronimo, Grid& gameBoard)
@@ -106,23 +111,15 @@ void CollisionHandler::handleCompletedRows(Grid& tetronimo, Grid& gameBoard)
         int rowNum = rowOnGameBoard + i;
         if ((rowNum < gameBoard.getHeight()) && checkForCompletedRow(rowNum, gameBoard))
         {
-            completedRows.push_back(rowNum);
+            mCompletedRows.push_back(rowNum);
         }
     }
 
-    if (completedRows.size() > 0)
+    if (mCompletedRows.size() > 0)
     {
-        // make each completed row flash a little
-        flashRows(completedRows, gameBoard, mBlackFlashTexture);
-        flashRows(completedRows, gameBoard, mWhiteFlashTexture);
-        flashRows(completedRows, gameBoard, mBlackFlashTexture);
-        flashRows(completedRows, gameBoard, mWhiteFlashTexture);
-
-        // delete the completed rows annd move existing rows down
-        gameBoard.moveRowsDown(completedRows.back(), completedRows.size());
-
-        // update positions
-        gameBoard.updatePositions();
+        // start the finished row animation routine
+        mFinishedRowRoutine = true;
+        setFlashingTexture(mCompletedRows, gameBoard, mBlackFlashTexture);
     }
 }
 
@@ -138,8 +135,27 @@ bool CollisionHandler::checkForCompletedRow(int rowNum, Grid& gameBoard)
     return true;
 }
 
+bool CollisionHandler::animateCompletedRows(Grid& gameBoard)
+{
+    if (mCurrentTime >= mFlashRowTransitionTime)
+    {
+        setFlashingTexture(mCompletedRows, gameBoard, (mNumberOfFlashesRemaining % 2 == 0) ? mBlackFlashTexture : mWhiteFlashTexture);
+    }
+
+    // finish the completed row routine - delete the completed rows and move existing rows down
+    if (mNumberOfFlashesRemaining == 0)
+    {
+        gameBoard.moveRowsDown(mCompletedRows.back(), mCompletedRows.size());
+        gameBoard.updatePositions();
+        mCompletedRows.clear();
+        mFinishedRowRoutine = false;
+        mNumberOfFlashesRemaining = N_ROW_FLASHES;
+    }
+    return false;
+}
+
 // Visual effect when the player completes a row
-void CollisionHandler::flashRows(std::vector<int> completedRows,
+void CollisionHandler::setFlashingTexture(std::vector<int> completedRows,
     Grid& gameBoard,
     Texture* texture)
 {
@@ -150,13 +166,8 @@ void CollisionHandler::flashRows(std::vector<int> completedRows,
             gameBoard.getBlock(rowNum, j).setTexture(texture);
         }
     }
-
-    // Update the screen just for this
-    SDL_Delay(COMPLETED_ROW_FLASH_INTERVAL_MS);
-    SDL_SetRenderDrawColor(mRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-    SDL_RenderClear(mRenderer);
-    gameBoard.render();
-    SDL_RenderPresent(mRenderer);
+    mNumberOfFlashesRemaining -= 1;
+    mFlashRowTransitionTime = mCurrentTime + COMPLETED_ROW_FLASH_INTERVAL_MS;
 }
 
 bool CollisionHandler::checkCollisions(Grid& tetronimo, Grid& gameBoard)
