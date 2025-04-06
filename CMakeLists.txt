@@ -21,13 +21,13 @@ include_directories(
 )
 
 add_executable(main 
-    main.cpp 
-    Block.cpp
-    CollisionHandler.cpp
-    Grid.cpp
-    Tetris.cpp
-    TetronimoFactory.cpp
-    Texture.cpp
+    src/main.cpp 
+    src/Block.cpp
+    src/CollisionHandler.cpp
+    src/Grid.cpp
+    src/Tetris.cpp
+    src/TetronimoFactory.cpp
+    src/Texture.cpp
 )
 
 # Set assets directory relative to the source
