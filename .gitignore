@@ -5,3 +5,4 @@ x64/
 *.h.gch
 build/
 main
+Testing/

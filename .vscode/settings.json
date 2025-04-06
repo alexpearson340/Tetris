@@ -1,7 +1,7 @@
 {
     "editor.formatOnSave": true,
     "clang-format.executable": "/opt/homebrew/opt/llvm/bin/clang-format",
-    "cmake.configureOnOpen": true,
+    "cmake.configureOnOpen": false,
     "cmake.buildDirectory": "${workspaceFolder}/build",
     "files.associations": {
         "__locale": "cpp",
