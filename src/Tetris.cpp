@@ -1,4 +1,4 @@
-#include "Tetris.h"
+#include "tetris/Tetris.h"
 #include <iostream>
 
 GameEngine::GameEngine()

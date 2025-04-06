@@ -1,4 +1,4 @@
-#include "CollisionHandler.h"
+#include "tetris/CollisionHandler.h"
 
 CollisionHandler::CollisionHandler(Texture* whiteFlashTexture, Texture* blackFlashTexture, uint32_t currentTime)
     : mPreviousTime { 0 }

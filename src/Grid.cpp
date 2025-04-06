@@ -1,4 +1,4 @@
-#include "Grid.h"
+#include "tetris/Grid.h"
 
 Grid::Grid(int x, int y, size_t rows, size_t cols)
     : mPosX(x)

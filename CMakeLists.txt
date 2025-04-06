@@ -7,10 +7,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # Manually set SDL2 include and library paths
 set(SDL2_INCLUDE_DIR "/opt/homebrew/include/SDL2")
 set(SDL2_LIBRARY "/opt/homebrew/lib/libSDL2.dylib")
-
 set(SDL2_IMAGE_INCLUDE_DIR "/opt/homebrew/include/SDL2")
 set(SDL2_IMAGE_LIBRARY "/opt/homebrew/lib/libSDL2_image.dylib")
-
 set(SDL2_TTF_INCLUDE_DIR "/opt/homebrew/include/SDL2")
 set(SDL2_TTF_LIBRARY "/opt/homebrew/lib/libSDL2_ttf.dylib")
 
@@ -18,10 +16,11 @@ include_directories(
     ${SDL2_INCLUDE_DIR}
     ${SDL2_IMAGE_INCLUDE_DIR}
     ${SDL2_TTF_INCLUDE_DIR}
+    ${CMAKE_SOURCE_DIR}/include
 )
 
-add_executable(main 
-    src/main.cpp 
+# Define the library sources
+set(TETRIS_LIB_SOURCES
     src/Block.cpp
     src/CollisionHandler.cpp
     src/Grid.cpp
@@ -29,15 +28,19 @@ add_executable(main
     src/TetronimoFactory.cpp
     src/Texture.cpp
 )
+add_library(tetris_lib STATIC ${TETRIS_LIB_SOURCES})
 
-# Set assets directory relative to the source
-target_compile_definitions(main PRIVATE ASSETS_DIR="${CMAKE_SOURCE_DIR}/assets")
+add_executable(tetris_game src/main.cpp)
 
-target_link_libraries(main 
+target_link_libraries(tetris_game
+    tetris_lib
     ${SDL2_LIBRARY}
     ${SDL2_IMAGE_LIBRARY}
     ${SDL2_TTF_LIBRARY}
 )
+
+# Set assets directory relative to the source
+target_compile_definitions(tetris_lib PRIVATE ASSETS_DIR="${CMAKE_SOURCE_DIR}/assets")
 
 # Google Test setup
 include(FetchContent)
