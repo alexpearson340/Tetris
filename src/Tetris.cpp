@@ -1,7 +1,6 @@
 #include "Tetris.h"
 #include <iostream>
 
-
 GameEngine::GameEngine()
     : mWindow { nullptr }
     , mRenderer { nullptr }
@@ -184,12 +183,11 @@ int GameEngine::run(int argc, char* args[])
             SDL_Event e;
 
             // Game state
+            mElapsedTime = SDL_GetTicks();
             mGameBoard = Grid(0, 0, N_ROWS, N_COLS);
             mGameBoard.updatePositions();
-            mCollisionHandler = CollisionHandler(mRenderer, &gTextures[BLOCK_TEXTURE_WHITE], &gTextures[BLOCK_TEXTURE_BLACK]);
+            mCollisionHandler = CollisionHandler(mRenderer, &gTextures[BLOCK_TEXTURE_WHITE], &gTextures[BLOCK_TEXTURE_BLACK], mElapsedTime);
             Grid tetronimo = mFactory.getNextTetronimo();
-
-            mElapsedTime = SDL_GetTicks();
 
             // While application is running
             while (!quit)
@@ -223,7 +221,7 @@ int GameEngine::run(int argc, char* args[])
                 if (keepPlaying)
                 {
                     // Handle movement and collisions
-                    if (mCollisionHandler.handle(tetronimo, mGameBoard))
+                    if (mCollisionHandler.handle(tetronimo, mGameBoard, SDL_GetTicks()))
                     {
                         tetronimo = mFactory.getNextTetronimo();
                         mScore = mScore + 4;

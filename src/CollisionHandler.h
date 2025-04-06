@@ -11,9 +11,9 @@
 class CollisionHandler
 {
 public:
-    CollisionHandler(SDL_Renderer*, Texture*, Texture*);
+    CollisionHandler(SDL_Renderer*, Texture*, Texture*, uint32_t);
 
-    bool handle(Grid&, Grid&);
+    bool handle(Grid&, Grid&, uint32_t);
 
     bool keepPlaying();
 

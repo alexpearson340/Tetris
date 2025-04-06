@@ -3,6 +3,7 @@
     "clang-format.executable": "/opt/homebrew/opt/llvm/bin/clang-format",
     "cmake.configureOnOpen": false,
     "cmake.configureOnEdit": false,
+    "cmake.buildBeforeRun": true,
     "cmake.buildDirectory": "${workspaceFolder}/build",
     "files.associations": {
         "__locale": "cpp",
@@ -59,6 +60,7 @@
         "unordered_map": "cpp",
         "variant": "cpp",
         "algorithm": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "__config": "cpp"
     }
 }

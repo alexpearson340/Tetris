@@ -1,8 +1,8 @@
 #include "CollisionHandler.h"
 
-CollisionHandler::CollisionHandler(SDL_Renderer* renderer, Texture* whiteFlashTexture, Texture* blackFlashTexture)
+CollisionHandler::CollisionHandler(SDL_Renderer* renderer, Texture* whiteFlashTexture, Texture* blackFlashTexture, uint32_t currentTime)
     : mPreviousTime { 0 }
-    , mCurrentTime { SDL_GetTicks() }
+    , mCurrentTime { currentTime }
     , mRenderer { renderer }
     , mWhiteFlashTexture { whiteFlashTexture }
     , mBlackFlashTexture { blackFlashTexture }
@@ -14,10 +14,10 @@ bool CollisionHandler::keepPlaying()
     return mKeepPlaying;
 }
 
-bool CollisionHandler::handle(Grid& tetronimo, Grid& gameBoard)
+bool CollisionHandler::handle(Grid& tetronimo, Grid& gameBoard, uint32_t currentTime)
 {
     // Cap horizontal movements and rotations to a certain frequency
-    mCurrentTime = SDL_GetTicks();
+    mCurrentTime = currentTime;
     if ((mCurrentTime - mPreviousTime) >= INPUT_INTERVAL_MS)
     {
         mPreviousTime = mCurrentTime;
