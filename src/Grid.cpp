@@ -30,13 +30,13 @@ void Grid::handleEvent(SDL_Event& e)
         switch (e.key.keysym.sym)
         {
         case SDLK_DOWN:
-            mVelY = VERTICAL_FAST_VELOCITY;
+            setVelY(VERTICAL_FAST_VELOCITY);
             break;
         case SDLK_LEFT:
-            mVelX = -1 * BLOCK_SIZE;
+            setVelX(-1 * BLOCK_SIZE);
             break;
         case SDLK_RIGHT:
-            mVelX = BLOCK_SIZE;
+            setVelX(BLOCK_SIZE);
             break;
         case SDLK_SPACE:
             mRotate = true;
@@ -50,13 +50,13 @@ void Grid::handleEvent(SDL_Event& e)
         switch (e.key.keysym.sym)
         {
         case SDLK_DOWN:
-            mVelY = VERTICAL_VELOCITY;
+            setVelY(VERTICAL_VELOCITY);
             break;
         case SDLK_LEFT:
-            mVelX = 0;
+            setVelX(0);
             break;
         case SDLK_RIGHT:
-            mVelX = 0;
+            setVelX(0);
             break;
         }
     }
@@ -163,6 +163,16 @@ int Grid::getPosX()
 int Grid::getPosY()
 {
     return mPosY;
+}
+
+void Grid::setVelX(int velX)
+{
+    mVelX = velX;
+}
+
+void Grid::setVelY(int velY)
+{
+    mVelY = velY;
 }
 
 bool Grid::shouldRotate()

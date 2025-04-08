@@ -19,8 +19,7 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/include
 )
 
-# Define the library sources
-set(TETRIS_LIB_SOURCES
+add_library(tetris_lib STATIC 
     src/Block.cpp
     src/CollisionHandler.cpp
     src/Grid.cpp
@@ -28,9 +27,10 @@ set(TETRIS_LIB_SOURCES
     src/TetronimoFactory.cpp
     src/Texture.cpp
 )
-add_library(tetris_lib STATIC ${TETRIS_LIB_SOURCES})
 
-add_executable(tetris_game src/main.cpp)
+add_executable(tetris_game 
+    src/main.cpp
+)
 
 target_link_libraries(tetris_game
     tetris_lib
@@ -40,7 +40,9 @@ target_link_libraries(tetris_game
 )
 
 # Set assets directory relative to the source
-target_compile_definitions(tetris_lib PRIVATE ASSETS_DIR="${CMAKE_SOURCE_DIR}/assets")
+target_compile_definitions(tetris_lib PRIVATE 
+    ASSETS_DIR="${CMAKE_SOURCE_DIR}/assets"
+)
 
 # Google Test setup
 include(FetchContent)

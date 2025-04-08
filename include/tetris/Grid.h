@@ -33,6 +33,10 @@ public:
 
     int getPosY();
 
+    void setVelX(int);
+
+    void setVelY(int);
+
     bool shouldRotate();
 
     void updatePositions();

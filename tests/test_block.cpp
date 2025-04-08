@@ -1,3 +1,4 @@
+#include "tetris/Block.h"
 #include <gtest/gtest.h>
 
 TEST(TestBlock, AlwaysTrue) 
