@@ -16,6 +16,12 @@ public:
     GameEngine(int, int);
     virtual ~GameEngine();
 
+    // We dont support copy constructor, copy assignment, move constructor, move assignment
+    GameEngine(const GameEngine&) = delete;
+    GameEngine& operator=(const GameEngine&) = delete;
+    GameEngine(GameEngine&&) = delete;
+    GameEngine& operator=(GameEngine&&) = delete;
+
     // Entry point. Run the game
     int run(int argc, char* args[]);
 
