@@ -1,4 +1,4 @@
-#include "tetris/Texture.h"
+#include "engine/Texture.h"
 
 Texture::Texture()
     : mTexture { nullptr }

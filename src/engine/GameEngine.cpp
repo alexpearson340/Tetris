@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "tetris/GameEngine.h"
+#include "engine/GameEngine.h"
 #include <cassert>
 
 GameEngine::GameEngine(const int screenHeight, const int screenWidth)
@@ -104,6 +104,19 @@ bool GameEngine::loadTexture(const int textureIndex, const std::string& fileName
     if (!mTextures[textureIndex].loadFromFile(filePath))
     {
         printf("Failed to load %s image!\n", filePath.c_str());
+        success = false;
+    }
+    return success;
+}
+
+bool GameEngine::loadFont(const std::string& fileName)
+{
+    bool success { true };
+    std::string fontPath { std::string(ASSETS_DIR) + "/" + fileName };
+    mFont = TTF_OpenFont(fontPath.c_str(), FONT_SIZE);
+    if (mFont == NULL)
+    {
+        printf("Failed to load font! SDL_ttf Error: %s\n", TTF_GetError());
         success = false;
     }
     return success;

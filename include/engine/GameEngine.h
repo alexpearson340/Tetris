@@ -1,7 +1,7 @@
 #ifndef GAMEENGINE_H
 #define GAMEENGINE_H
 
-#include "Texture.h"
+#include "engine/Texture.h"
 #include <sstream>
 
 inline constexpr SDL_Color BACKGROUND_COLOUR { 250, 250, 250, 255 };
@@ -33,8 +33,9 @@ protected:
     virtual bool update() = 0;
     virtual bool render() = 0;
 
-    // Loads the texture at the file path
+    // Loads the textures at the file path
     bool loadTexture(const int, const std::string&);
+    bool loadFont(const std::string&);
 
     // Updates the information bar texture text
     void updateInformationBar();

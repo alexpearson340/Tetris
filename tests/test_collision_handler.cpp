@@ -1,5 +1,5 @@
 #include "tetris/CollisionHandler.h"
-#include "tetris/Texture.h"
+#include "engine/Texture.h"
 #include <gtest/gtest.h>
 
 class CollisionHandlerTest : public ::testing::Test

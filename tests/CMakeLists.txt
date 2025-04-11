@@ -6,6 +6,7 @@ add_executable(
 )
 
 target_link_libraries(tetris_tests
+  engine_lib
   tetris_lib
   GTest::gtest_main
   # for now link in SDL, until we have a better mocking solution

@@ -1,7 +1,7 @@
 #ifndef TETRONIMOFACTORY_H
 #define TETRONIMOFACTORY_H
 
-#include "Grid.h"
+#include "tetris/Grid.h"
 #include <random>
 
 // Provides a random Grid representing a Tetronimo on demand

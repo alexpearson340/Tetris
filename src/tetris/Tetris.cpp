@@ -28,13 +28,7 @@ bool TetrisGameEngine::loadMedia()
     success = success && loadTexture(BLOCK_TEXTURE_BLACK, "black.bmp");
 
     // Open the font
-    std::string fontPath { std::string(ASSETS_DIR) + "/" + "Arial.ttf" };
-    mFont = TTF_OpenFont(fontPath.c_str(), FONT_SIZE);
-    if (mFont == NULL)
-    {
-        printf("Failed to load font! SDL_ttf Error: %s\n", TTF_GetError());
-        success = false;
-    }
+    success = success && loadFont("Arial.ttf");
     return success;
 }
 

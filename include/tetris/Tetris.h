@@ -2,7 +2,7 @@
 #define TETRIS_H
 
 #include "tetris/CollisionHandler.h"
-#include "tetris/GameEngine.h"
+#include "engine/GameEngine.h"
 #include "tetris/Grid.h"
 #include "tetris/TetronimoFactory.h"
 

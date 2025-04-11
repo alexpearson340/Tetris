@@ -1,8 +1,8 @@
 #ifndef GRID_H
 #define GRID_H
 
-#include "Block.h"
-#include "Constants.h"
+#include "tetris/Block.h"
+#include "tetris/Constants.h"
 #include <sstream>
 
 // A class wrapping a 2D grid of Blocks.

@@ -1,8 +1,8 @@
 #ifndef COLLISIONHANDLER_H
 #define COLLISIONHANDLER_H
 
-#include "Grid.h"
-#include "Texture.h"
+#include "tetris/Grid.h"
+#include "engine/Texture.h"
 
 // Handles the horizontal, rotational and vertical
 // collision scenarios, as well as freezing Tetronimos

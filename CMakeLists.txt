@@ -19,14 +19,17 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/include
 )
 
+add_library(engine_lib STATIC
+    src/engine/GameEngine.cpp
+    src/engine/Texture.cpp
+)
+
 add_library(tetris_lib STATIC 
-    src/Block.cpp
-    src/CollisionHandler.cpp
-    src/GameEngine.cpp
-    src/Grid.cpp
-    src/Tetris.cpp
-    src/TetronimoFactory.cpp
-    src/Texture.cpp
+    src/tetris/Block.cpp
+    src/tetris/CollisionHandler.cpp
+    src/tetris/Grid.cpp
+    src/tetris/Tetris.cpp
+    src/tetris/TetronimoFactory.cpp
 )
 
 add_executable(tetris_game 
@@ -34,6 +37,7 @@ add_executable(tetris_game
 )
 
 target_link_libraries(tetris_game
+    engine_lib
     tetris_lib
     ${SDL2_LIBRARY}
     ${SDL2_IMAGE_LIBRARY}
@@ -41,7 +45,7 @@ target_link_libraries(tetris_game
 )
 
 # Set assets directory relative to the source
-target_compile_definitions(tetris_lib PRIVATE 
+target_compile_definitions(engine_lib PRIVATE 
     ASSETS_DIR="${CMAKE_SOURCE_DIR}/assets"
 )
 
