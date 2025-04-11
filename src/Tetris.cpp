@@ -6,12 +6,14 @@ TetrisGameEngine::TetrisGameEngine()
     , mCurrentTetronimo { 0, 0, 0, 0 }
     , mGameBoard { 0, 0, 0, 0 }
     , mFactory { mTextures }
-    , mCollisionHandler { nullptr, nullptr, 0 } {
-    };
+    , mCollisionHandler { nullptr, nullptr, 0 } 
+{
+};
 
 bool TetrisGameEngine::loadMedia()
 {
     bool success = true;
+    mTextures.resize(BLOCK_TEXTURE_TOTAL + 1);
 
     // Open the block textures
     success = success && loadTexture(BLOCK_TEXTURE_RED, "red.bmp");

@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "tetris/GameEngine.h"
+#include <cassert>
 
 GameEngine::GameEngine(const int screenHeight, const int screenWidth)
     : mScreenHeight { screenHeight }
@@ -98,6 +99,7 @@ bool GameEngine::loadTexture(const int textureIndex, const std::string& fileName
     bool success = true;
     std::string filePath { std::string(ASSETS_DIR) + "/" + fileName };
     Texture texture { mRenderer };
+    assert((textureIndex < mTextures.size() && "Texture index is out of bounds!"));
     mTextures[textureIndex] = texture;
     if (!mTextures[textureIndex].loadFromFile(filePath))
     {
