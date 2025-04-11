@@ -4,7 +4,19 @@
 GameEngine::GameEngine()
     : mWindow { nullptr }
     , mRenderer { nullptr }
+    , mFont { nullptr }
     , mInfoBar {}
+    , mInfoText {}
+    , mQuit { false }
+    , mPlaying { true }
+    , mElapsedTime { 0 }
+    , mFrameCount { 0 }
+    , mScore { 0 }
+    , mFps { 0 }
+{
+}
+
+GameEngine::~GameEngine()
 {
 }
 
@@ -78,40 +90,13 @@ bool GameEngine::init()
     return success;
 }
 
-bool GameEngine::loadMedia()
-{
-    bool success = true;
-
-    // Open the block textures
-    success = success && loadTexture(BLOCK_TEXTURE_RED, "red.bmp");
-    success = success && loadTexture(BLOCK_TEXTURE_BLUE, "blue.bmp");
-    success = success && loadTexture(BLOCK_TEXTURE_YELLOW, "yellow.bmp");
-    success = success && loadTexture(BLOCK_TEXTURE_GREEN, "green.bmp");
-    success = success && loadTexture(BLOCK_TEXTURE_PURPLE, "purple.bmp");
-    success = success && loadTexture(BLOCK_TEXTURE_ORANGE, "orange.bmp");
-    success = success && loadTexture(BLOCK_TEXTURE_NAVY, "navy.bmp");
-    success = success && loadTexture(BLOCK_TEXTURE_GREY, "grey.bmp");
-    success = success && loadTexture(BLOCK_TEXTURE_WHITE, "white.bmp");
-    success = success && loadTexture(BLOCK_TEXTURE_BLACK, "black.bmp");
-
-    // Open the font
-    std::string fontPath { std::string(ASSETS_DIR) + "/" + "Arial.ttf" };
-    mFont = TTF_OpenFont(fontPath.c_str(), FONT_SIZE);
-    if (mFont == NULL)
-    {
-        printf("Failed to load font! SDL_ttf Error: %s\n", TTF_GetError());
-        success = false;
-    }
-    return success;
-}
-
 bool GameEngine::loadTexture(const int textureIndex, const std::string& fileName)
 {
     bool success = true;
     std::string filePath { std::string(ASSETS_DIR) + "/" + fileName };
     Texture texture { mRenderer };
-    gTextures[textureIndex] = texture;
-    if (!gTextures[textureIndex].loadFromFile(filePath))
+    mTextures[textureIndex] = texture;
+    if (!mTextures[textureIndex].loadFromFile(filePath))
     {
         printf("Failed to load %s image!\n", filePath.c_str());
         success = false;
@@ -135,7 +120,7 @@ void GameEngine::close()
     // Free loaded images
     for (int i = 0; i < BLOCK_TEXTURE_TOTAL; ++i)
     {
-        gTextures[i].free();
+        mTextures[i].free();
     }
 
     // Free global font
@@ -174,23 +159,13 @@ int GameEngine::run(int argc, char* args[])
             mInfoBar = Texture(mRenderer, mFont);
             updateInformationBar();
             mInfoText.str("");
-
-            // Main loop flag
-            bool quit = false;
-            bool keepPlaying = true;
-
-            // Event handler
-            SDL_Event e;
-
-            // Game state
             mElapsedTime = SDL_GetTicks();
-            mGameBoard = Grid(0, 0, N_ROWS, N_COLS);
-            mGameBoard.updatePositions();
-            mCollisionHandler = CollisionHandler(&gTextures[BLOCK_TEXTURE_WHITE], &gTextures[BLOCK_TEXTURE_BLACK], mElapsedTime);
-            Grid tetronimo = mFactory.getNextTetronimo();
+
+            // Create the game state objects
+            create();
 
             // While application is running
-            while (!quit)
+            while (!mQuit)
             {
                 // Increment counters
                 mFrameCount++;
@@ -202,41 +177,12 @@ int GameEngine::run(int argc, char* args[])
                     updateInformationBar();
                 }
 
-                // Handle events on queue
-                while (SDL_PollEvent(&e) != 0)
-                {
-                    // User requests quit
-                    if (e.type == SDL_QUIT)
-                    {
-                        quit = true;
-                    }
-
-                    if (keepPlaying)
-                    {
-                        // Handle input for the block
-                        tetronimo.handleEvent(e);
-                    }
-                }
-
-                if (keepPlaying)
-                {
-                    // Handle movement and collisions
-                    if (mCollisionHandler.handle(tetronimo, mGameBoard, SDL_GetTicks()))
-                    {
-                        tetronimo = mFactory.getNextTetronimo();
-                        mScore = mScore + 4;
-                        updateInformationBar();
-                    };
-                    keepPlaying = mCollisionHandler.keepPlaying();
-                }
+                // Update game state objects
+                update();
 
                 // Clear screen
                 SDL_SetRenderDrawColor(mRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
                 SDL_RenderClear(mRenderer);
-
-                // Draw the start line
-                SDL_SetRenderDrawColor(mRenderer, 0xC8, 0xC8, 0xC8, 0xFF);
-                SDL_RenderDrawLine(mRenderer, 0, START_LINE, SCREEN_WIDTH, START_LINE);
 
                 // Draw the information box
                 SDL_SetRenderDrawColor(mRenderer,
@@ -249,10 +195,8 @@ int GameEngine::run(int argc, char* args[])
                 };
                 SDL_RenderFillRect(mRenderer, &infoBoxRect);
 
-                // Render objects
-                mGameBoard.render();
-                tetronimo.render();
-                mInfoBar.render(0, BOTTOM_BAR_START);
+                // Render game state objects
+                render();
 
                 // Update screen
                 SDL_RenderPresent(mRenderer);
@@ -264,4 +208,96 @@ int GameEngine::run(int argc, char* args[])
     close();
     std::cout << "Finished cleanly" << '\n';
     return 0;
+}
+
+TetrisGameEngine::TetrisGameEngine()
+    : GameEngine()
+    , mCurrentTetronimo { 0, 0, 0, 0 }
+    , mGameBoard { 0, 0, 0, 0 }
+    , mFactory { mTextures }
+    , mCollisionHandler { nullptr, nullptr, 0 } {
+    };
+
+bool TetrisGameEngine::loadMedia()
+{
+    bool success = true;
+
+    // Open the block textures
+    success = success && loadTexture(BLOCK_TEXTURE_RED, "red.bmp");
+    success = success && loadTexture(BLOCK_TEXTURE_BLUE, "blue.bmp");
+    success = success && loadTexture(BLOCK_TEXTURE_YELLOW, "yellow.bmp");
+    success = success && loadTexture(BLOCK_TEXTURE_GREEN, "green.bmp");
+    success = success && loadTexture(BLOCK_TEXTURE_PURPLE, "purple.bmp");
+    success = success && loadTexture(BLOCK_TEXTURE_ORANGE, "orange.bmp");
+    success = success && loadTexture(BLOCK_TEXTURE_NAVY, "navy.bmp");
+    success = success && loadTexture(BLOCK_TEXTURE_GREY, "grey.bmp");
+    success = success && loadTexture(BLOCK_TEXTURE_WHITE, "white.bmp");
+    success = success && loadTexture(BLOCK_TEXTURE_BLACK, "black.bmp");
+
+    // Open the font
+    std::string fontPath { std::string(ASSETS_DIR) + "/" + "Arial.ttf" };
+    mFont = TTF_OpenFont(fontPath.c_str(), FONT_SIZE);
+    if (mFont == NULL)
+    {
+        printf("Failed to load font! SDL_ttf Error: %s\n", TTF_GetError());
+        success = false;
+    }
+    return success;
+}
+
+bool TetrisGameEngine::create()
+{
+    mGameBoard = Grid(0, 0, N_ROWS, N_COLS);
+    mGameBoard.updatePositions();
+    mCollisionHandler = CollisionHandler(
+        &mTextures[BLOCK_TEXTURE_WHITE],
+        &mTextures[BLOCK_TEXTURE_BLACK],
+        mElapsedTime);
+    mCurrentTetronimo = mFactory.getNextTetronimo();
+    return true;
+}
+
+bool TetrisGameEngine::update()
+{
+    // Handle events on queue
+    while (SDL_PollEvent(&mEvent) != 0)
+    {
+        // User requests quit
+        if (mEvent.type == SDL_QUIT)
+        {
+            mQuit = true;
+        }
+
+        if (mPlaying)
+        {
+            // Handle input for the block
+            mCurrentTetronimo.handleEvent(mEvent);
+        }
+    }
+
+    if (mPlaying)
+    {
+        // Handle movement and collisions
+        if (mCollisionHandler.handle(mCurrentTetronimo, mGameBoard, SDL_GetTicks()))
+        {
+            mCurrentTetronimo = mFactory.getNextTetronimo();
+            mScore = mScore + 4;
+            updateInformationBar();
+        };
+        mPlaying = mCollisionHandler.keepPlaying();
+    }
+    return true;
+}
+
+bool TetrisGameEngine::render()
+{
+    // Draw the start line
+    SDL_SetRenderDrawColor(mRenderer, 0xC8, 0xC8, 0xC8, 0xFF);
+    SDL_RenderDrawLine(mRenderer, 0, START_LINE, SCREEN_WIDTH, START_LINE);
+
+    // Render game state objects
+    mGameBoard.render();
+    mCurrentTetronimo.render();
+    mInfoBar.render(0, BOTTOM_BAR_START);
+    return true;
 }

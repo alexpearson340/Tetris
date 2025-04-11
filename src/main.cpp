@@ -2,6 +2,6 @@
 
 int main(int argc, char* args[])
 {
-    GameEngine tetris;
+    TetrisGameEngine tetris;
     return tetris.run(argc, args);
 }
