@@ -22,6 +22,7 @@ include_directories(
 add_library(tetris_lib STATIC 
     src/Block.cpp
     src/CollisionHandler.cpp
+    src/GameEngine.cpp
     src/Grid.cpp
     src/Tetris.cpp
     src/TetronimoFactory.cpp

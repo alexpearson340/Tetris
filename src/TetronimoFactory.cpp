@@ -1,7 +1,7 @@
 #include "tetris/TetronimoFactory.h"
 
 
-TetronimoFactory::TetronimoFactory(Texture* textures)
+TetronimoFactory::TetronimoFactory(std::vector<Texture> textures)
     : mTextures { textures }
 {
     setup();
