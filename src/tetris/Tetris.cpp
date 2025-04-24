@@ -6,29 +6,28 @@ TetrisGameEngine::TetrisGameEngine()
     , mCurrentTetronimo { 0, 0, 0, 0 }
     , mGameBoard { 0, 0, 0, 0 }
     , mFactory { mTextures }
-    , mCollisionHandler { nullptr, nullptr, 0 } 
-{
-};
+    , mCollisionHandler { nullptr, nullptr, 0 } {
+    };
 
 bool TetrisGameEngine::loadMedia()
 {
     bool success = true;
-    mTextures.resize(BLOCK_TEXTURE_TOTAL + 1);
+    mTextures.clear();
 
     // Open the block textures
-    success = success && loadTexture(BLOCK_TEXTURE_RED, "red.bmp");
-    success = success && loadTexture(BLOCK_TEXTURE_BLUE, "blue.bmp");
-    success = success && loadTexture(BLOCK_TEXTURE_YELLOW, "yellow.bmp");
-    success = success && loadTexture(BLOCK_TEXTURE_GREEN, "green.bmp");
-    success = success && loadTexture(BLOCK_TEXTURE_PURPLE, "purple.bmp");
-    success = success && loadTexture(BLOCK_TEXTURE_ORANGE, "orange.bmp");
-    success = success && loadTexture(BLOCK_TEXTURE_NAVY, "navy.bmp");
-    success = success && loadTexture(BLOCK_TEXTURE_GREY, "grey.bmp");
-    success = success && loadTexture(BLOCK_TEXTURE_WHITE, "white.bmp");
-    success = success && loadTexture(BLOCK_TEXTURE_BLACK, "black.bmp");
+    success = success && loadTexture(BLOCK_TEXTURE_RED);
+    success = success && loadTexture(BLOCK_TEXTURE_BLUE);
+    success = success && loadTexture(BLOCK_TEXTURE_YELLOW);
+    success = success && loadTexture(BLOCK_TEXTURE_GREEN);
+    success = success && loadTexture(BLOCK_TEXTURE_PURPLE);
+    success = success && loadTexture(BLOCK_TEXTURE_ORANGE);
+    success = success && loadTexture(BLOCK_TEXTURE_NAVY);
+    success = success && loadTexture(BLOCK_TEXTURE_GREY);
+    success = success && loadTexture(BLOCK_TEXTURE_WHITE);
+    success = success && loadTexture(BLOCK_TEXTURE_BLACK);
 
     // Open the font
-    success = success && loadFont("Arial.ttf");
+    success = success && loadFont(FONT_ARIAL);
     return success;
 }
 
@@ -37,8 +36,8 @@ bool TetrisGameEngine::create()
     mGameBoard = Grid(0, 0, N_ROWS, N_COLS);
     mGameBoard.updatePositions();
     mCollisionHandler = CollisionHandler(
-        &mTextures[BLOCK_TEXTURE_WHITE],
-        &mTextures[BLOCK_TEXTURE_BLACK],
+        &mTextures.at(BLOCK_TEXTURE_WHITE),
+        &mTextures.at(BLOCK_TEXTURE_BLACK),
         mElapsedTime);
     mCurrentTetronimo = mFactory.getNextTetronimo();
     return true;

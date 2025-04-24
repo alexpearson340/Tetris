@@ -1,6 +1,8 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
+#include <string>
+
 #include <SDL.h>
 
 // global constants
@@ -21,19 +23,17 @@ constexpr int TETRONIMO_START_X = 120;
 constexpr int TETRONIMO_START_Y = 0;
 
 // Different textures for blocks
-enum BlockTextures
-{
-    BLOCK_TEXTURE_RED,
-    BLOCK_TEXTURE_BLUE,
-    BLOCK_TEXTURE_YELLOW,
-    BLOCK_TEXTURE_GREEN,
-    BLOCK_TEXTURE_PURPLE,
-    BLOCK_TEXTURE_ORANGE,
-    BLOCK_TEXTURE_NAVY,
-    BLOCK_TEXTURE_GREY,
-    BLOCK_TEXTURE_WHITE,
-    BLOCK_TEXTURE_BLACK,
-    BLOCK_TEXTURE_TOTAL
-};
+constexpr std::string_view BLOCK_TEXTURE_RED { "red.bmp" };
+constexpr std::string_view BLOCK_TEXTURE_BLUE { "blue.bmp" };
+constexpr std::string_view BLOCK_TEXTURE_YELLOW { "yellow.bmp" };
+constexpr std::string_view BLOCK_TEXTURE_GREEN { "green.bmp" };
+constexpr std::string_view BLOCK_TEXTURE_PURPLE { "purple.bmp" };
+constexpr std::string_view BLOCK_TEXTURE_ORANGE { "orange.bmp" };
+constexpr std::string_view BLOCK_TEXTURE_NAVY { "navy.bmp" };
+constexpr std::string_view BLOCK_TEXTURE_GREY { "grey.bmp" };
+constexpr std::string_view BLOCK_TEXTURE_WHITE { "white.bmp" };
+constexpr std::string_view BLOCK_TEXTURE_BLACK { "black.bmp" };
+
+constexpr std::string_view FONT_ARIAL { "Arial.ttf" };
 
 #endif // CONSTANTS_H

@@ -40,8 +40,8 @@ protected:
     virtual bool render() = 0;
 
     // Loads the textures at the file path
-    bool loadTexture(const int, const std::string&);
-    bool loadFont(const std::string&);
+    bool loadTexture(const std::string_view);
+    bool loadFont(const std::string_view);
 
     // Updates the information bar texture text
     void updateInformationBar();
@@ -56,7 +56,7 @@ protected:
     SDL_Renderer* mRenderer;
 
     // textures and fonts
-    std::vector<Texture> mTextures;
+    std::unordered_map<std::string_view, Texture> mTextures;
     TTF_Font* mFont;
 
     // A text texture displaying FPS, score, etc

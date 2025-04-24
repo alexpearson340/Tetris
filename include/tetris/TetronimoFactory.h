@@ -8,7 +8,7 @@
 class TetronimoFactory
 {
 public:
-    TetronimoFactory(std::vector<Texture>&);
+    TetronimoFactory(std::unordered_map<std::string_view, Texture>&);
 
     Grid getNextTetronimo();
 
@@ -18,7 +18,7 @@ private:
     std::uniform_int_distribution<> mDis; // Uniform distribution
     const int mTetronimoStartX { TETRONIMO_START_X };
     const int mTetronimoStartY { TETRONIMO_START_Y };
-    std::vector<Texture>& mTextures;
+    std::unordered_map<std::string_view, Texture>& mTextures;
 };
 
 #endif

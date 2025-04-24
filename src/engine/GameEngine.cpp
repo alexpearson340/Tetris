@@ -94,25 +94,33 @@ bool GameEngine::init()
     return success;
 }
 
-bool GameEngine::loadTexture(const int textureIndex, const std::string& fileName)
+bool GameEngine::loadTexture(const std::string_view fileName)
 {
     bool success = true;
-    std::string filePath { std::string(ASSETS_DIR) + "/" + fileName };
-    Texture texture { mRenderer };
-    assert((textureIndex < mTextures.size() && "Texture index is out of bounds!"));
-    mTextures[textureIndex] = texture;
-    if (!mTextures[textureIndex].loadFromFile(filePath))
+    std::string filePath { std::string(ASSETS_DIR) + "/" + std::string(fileName) };
+    printf("Loading %s\n", std::string(fileName).c_str());
+    if (mTextures.find(fileName) != mTextures.end())
     {
-        printf("Failed to load %s image!\n", filePath.c_str());
+        printf("Key %s has already been loaded to the textures map!\n", filePath.c_str());
         success = false;
+    }
+    else
+    {
+        mTextures[fileName] = Texture { mRenderer };
+        if (!mTextures.at(fileName).loadFromFile(filePath))
+        {
+            printf("Failed to load %s image!\n", filePath.c_str());
+            success = false;
+        }
     }
     return success;
 }
 
-bool GameEngine::loadFont(const std::string& fileName)
+bool GameEngine::loadFont(const std::string_view fileName)
 {
     bool success { true };
-    std::string fontPath { std::string(ASSETS_DIR) + "/" + fileName };
+    std::string fontPath { std::string(ASSETS_DIR) + "/" + std::string(fileName) };
+    printf("Loading %s\n", std::string(fileName).c_str());
     mFont = TTF_OpenFont(fontPath.c_str(), FONT_SIZE);
     if (mFont == NULL)
     {
@@ -136,9 +144,9 @@ void GameEngine::updateInformationBar()
 void GameEngine::close()
 {
     // Free loaded images
-    for (int i = 0; i < mTextures.size(); ++i)
+    for (auto& pair : mTextures) 
     {
-        mTextures[i].free();
+        pair.second.free();
     }
 
     // Free global font

@@ -19,7 +19,7 @@ public:
     ~Texture();
 
     // Loads image at specified path
-    bool loadFromFile(const std::string& path);
+    bool loadFromFile(const std::string & path);
 
     // Creates image from font string
     bool loadFromRenderedText(std::string textureText, SDL_Color textColor, SDL_Color backgroundColour);
