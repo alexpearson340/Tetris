@@ -1,8 +1,8 @@
 #ifndef COLLISIONHANDLER_H
 #define COLLISIONHANDLER_H
 
-#include "tetris/Grid.h"
 #include "engine/Texture.h"
+#include "tetris/Grid.h"
 
 // Handles the horizontal, rotational and vertical
 // collision scenarios, as well as freezing Tetronimos
@@ -32,12 +32,12 @@ private:
 
     bool checkForCompletedRow(int, Grid&);
 
-    void setFlashingTexture(std::vector<int>, Grid&, Texture*);
+    void setFlashingTexture(std::vector<size_t>, Grid&, Texture*);
 
     bool checkCollisions(Grid&, Grid&);
 
     bool mKeepPlaying { true };
-    std::vector<int> mCompletedRows;
+    std::vector<size_t> mCompletedRows;
     Uint32 mPreviousTime;
     Uint32 mCurrentTime;
     Texture* mWhiteFlashTexture;

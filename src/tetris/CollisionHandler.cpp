@@ -104,7 +104,6 @@ void CollisionHandler::handleCompletedRows(Grid& tetronimo, Grid& gameBoard)
     // work out which rows have been completed
     int rowOnGameBoard = tetronimo.getPosY() / BLOCK_SIZE;
     int colOnGameBoard = tetronimo.getPosX() / BLOCK_SIZE;
-    int rowNum;
     std::vector<int> completedRows;
     for (int i = 0; i < tetronimo.getHeight(); ++i)
     {
@@ -155,13 +154,13 @@ bool CollisionHandler::animateCompletedRows(Grid& gameBoard)
 }
 
 // Visual effect when the player completes a row
-void CollisionHandler::setFlashingTexture(std::vector<int> completedRows,
+void CollisionHandler::setFlashingTexture(std::vector<size_t> completedRows,
     Grid& gameBoard,
     Texture* texture)
 {
-    for (int rowNum : completedRows)
+    for (auto rowNum : completedRows)
     {
-        for (int j = 0; j < gameBoard.getWidth(); ++j)
+        for (auto j = 0; j < gameBoard.getWidth(); ++j)
         {
             gameBoard.getBlock(rowNum, j).setTexture(texture);
         }

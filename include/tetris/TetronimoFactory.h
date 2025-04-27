@@ -3,6 +3,7 @@
 
 #include "tetris/Grid.h"
 #include <random>
+#include <unordered_map>
 
 // Provides a random Grid representing a Tetronimo on demand
 class TetronimoFactory

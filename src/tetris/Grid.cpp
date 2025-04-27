@@ -16,7 +16,7 @@ void Grid::createBlock(int i, int j, Texture* texture)
     mGrid[i][j] = Block { blockX, blockY, texture };
 };
 
-Block& Grid::getBlock(int i, int j)
+Block& Grid::getBlock(size_t i, size_t j)
 {
     return mGrid[i][j];
 }
@@ -123,9 +123,9 @@ void Grid::updatePositions()
     }
 }
 
-void Grid::moveRowsDown(int bottomRow, int nRowsToDelete)
+void Grid::moveRowsDown(size_t bottomRow, size_t nRowsToDelete)
 {
-    for (int r = bottomRow; r >= nRowsToDelete; r--)
+    for (size_t r = bottomRow; r >= nRowsToDelete; r--)
     {
         mGrid[r] = mGrid[r - nRowsToDelete];
     }
@@ -145,12 +145,12 @@ void Grid::render()
     }
 }
 
-int Grid::getHeight()
+size_t Grid::getHeight()
 {
     return mRows;
 }
 
-int Grid::getWidth()
+size_t Grid::getWidth()
 {
     return mCols;
 }

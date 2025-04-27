@@ -4,6 +4,7 @@
 #include "tetris/Block.h"
 #include "tetris/Constants.h"
 #include <sstream>
+#include <vector>
 
 // A class wrapping a 2D grid of Blocks.
 // The game board, as well as individual Tetronimos are
@@ -20,14 +21,14 @@ public:
 
     void createBlock(int, int, Texture*);
 
-    Block& getBlock(int, int);
+    Block& getBlock(size_t, size_t);
     void rotateClockwise();
     void rotateAntiClockwise();
     void render();
 
-    int getHeight();
+    size_t getHeight();
 
-    int getWidth();
+    size_t getWidth();
 
     int getPosX();
 
@@ -41,7 +42,7 @@ public:
 
     void updatePositions();
 
-    void moveRowsDown(int, int);
+    void moveRowsDown(size_t, size_t);
 
 private:
     // The X and Y offsets of the grid
