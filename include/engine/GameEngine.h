@@ -3,6 +3,7 @@
 
 #include "engine/Texture.h"
 #include <sstream>
+#include <unordered_map>
 
 inline constexpr SDL_Color BACKGROUND_COLOUR { 250, 250, 250, 255 };
 inline constexpr SDL_Color TEXT_COLOUR { 0, 0, 0, 255 };
@@ -26,7 +27,6 @@ public:
     int run(int argc, char* args[]);
 
 protected:
-
     const int mScreenHeight;
     const int mScreenWidth;
 
@@ -67,8 +67,8 @@ protected:
     SDL_Event mEvent;
 
     // States
-    bool mQuit;     // exit the actual game window altogether
-    bool mPlaying;  // the playable part of the game is running or not
+    bool mQuit; // exit the actual game window altogether
+    bool mPlaying; // the playable part of the game is running or not
 
     // Counters
     Uint32 mElapsedTime;

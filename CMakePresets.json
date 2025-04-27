@@ -12,6 +12,18 @@
                 "CMAKE_EXPORT_COMPILE COMMANDS": "YES",
                 "CMAKE_PREFIX_PATH": "/opt/homebrew/opt/sdl2;/opt/homebrew/opt/sdl2_image;/opt/homebrew/opt/sdl2_ttf"
             }
+        },
+        {
+            "name": "windows",
+            "description": "Windows settings for my cmake project",
+            "hidden": false,
+            "generator": "Visual Studio 17 2022",
+            "binaryDir": "${workspaceFolder}/build",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_EXPORT_COMPILE COMMANDS": "YES",
+                "CMAKE_PREFIX_PATH": ""
+            }
         }
     ]
 }
