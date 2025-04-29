@@ -9,16 +9,17 @@ Grid::Grid(int x, int y, size_t rows, size_t cols)
 {
 }
 
-void Grid::createBlock(int i, int j, Texture* texture)
-{
-    int blockX = mPosX + (j * BLOCK_SIZE);
-    int blockY = mPosY + (i * BLOCK_SIZE);
-    mGrid[i][j] = Block { blockX, blockY, texture };
+void Grid::createBlock(int xIndex, int yIndex, Texture* texture)
+{   
+    int blockX = mPosX + (xIndex * BLOCK_SIZE);
+    int blockY = mPosY + (yIndex * BLOCK_SIZE);
+    mGrid[yIndex][xIndex] = Block { blockX, blockY, texture };
 };
 
-Block& Grid::getBlock(size_t i, size_t j)
-{
-    return mGrid[i][j];
+
+Block& Grid::getBlock(size_t xIndex, size_t yIndex)
+{   
+    return mGrid[yIndex][xIndex];
 }
 
 void Grid::handleEvent(SDL_Event& e)
@@ -69,11 +70,11 @@ void Grid::move(int xMul, int yMul)
     int yMove = mVelY * yMul;
 
     // Move all the blocks
-    for (int i = 0; i < mRows; ++i)
+    for (int xIndex = 0; xIndex < mCols; ++xIndex)
     {
-        for (int j = 0; j < mCols; ++j)
+        for (int yIndex = 0; yIndex < mRows; ++yIndex)
         {
-            mGrid[i][j].move(xMove, yMove);
+            mGrid[yIndex][xIndex].move(xMove, yMove);
         }
     }
 
@@ -86,9 +87,9 @@ void Grid::rotateClockwise()
 {
     transpose();
     // Reverse each row
-    for (size_t i = 0; i < mRows; ++i)
+    for (size_t xIndex = 0; xIndex < mCols; ++xIndex)
     {
-        std::reverse(mGrid[i].begin(), mGrid[i].end());
+        std::reverse(mGrid[xIndex].begin(), mGrid[xIndex].end());
     }
     updatePositions();
     mRotate = false;
@@ -103,22 +104,22 @@ void Grid::rotateAntiClockwise()
 
 void Grid::transpose()
 {
-    for (int i = 0; i < mRows; ++i)
+    for (int xIndex = 0; xIndex < mCols; ++xIndex)
     {
-        for (int j = i + 1; j < mRows; ++j)
+        for (int yIndex = xIndex + 1; yIndex < mRows; ++yIndex)
         {
-            std::swap(mGrid[i][j], mGrid[j][i]);
+            std::swap(mGrid[xIndex][yIndex], mGrid[yIndex][xIndex]);
         }
     }
 }
 
 void Grid::updatePositions()
 {
-    for (int i = 0; i < mRows; ++i)
+    for (int xIndex = 0; xIndex < mCols; ++xIndex)
     {
-        for (int j = 0; j < mCols; ++j)
+        for (int yIndex = 0; yIndex < mRows; ++yIndex)
         {
-            mGrid[i][j].moveTo(mPosX + (j * BLOCK_SIZE), mPosY + (i * BLOCK_SIZE));
+            mGrid[yIndex][xIndex].moveTo(mPosX + (xIndex * BLOCK_SIZE), mPosY + (yIndex * BLOCK_SIZE));
         }
     }
 }
@@ -133,13 +134,13 @@ void Grid::moveRowsDown(size_t bottomRow, size_t nRowsToDelete)
 
 void Grid::render()
 {
-    for (int i = 0; i < mRows; ++i)
+    for (int xIndex = 0; xIndex < mCols; ++xIndex)
     {
-        for (int j = 0; j < mCols; ++j)
+        for (int yIndex = 0; yIndex < mRows; ++yIndex)
         {
-            if (mGrid[i][j].exists())
+            if (mGrid[yIndex][xIndex].exists())
             {
-                mGrid[i][j].render();
+                mGrid[yIndex][xIndex].render();
             };
         }
     }
