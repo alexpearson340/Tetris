@@ -36,7 +36,7 @@ bool CollisionHandler::handle(Grid& tetronimo, Grid& gameBoard, uint32_t current
 }
 
 void CollisionHandler::handleHorizontal(Grid& tetronimo, Grid& gameBoard)
-{   
+{
     // Move the block horizontally
     tetronimo.move(1, 0);
     if (!checkCollisions(tetronimo, gameBoard))
@@ -87,7 +87,7 @@ void CollisionHandler::freezeTetronimo(Grid& tetronimo, Grid& gameBoard)
         {
             Block& block = tetronimo.getBlock(xIndex, yIndex);
             if (block.exists())
-            {   
+            {
                 gameBoard.createBlock(colOnGameBoard + xIndex, rowOnGameBoard + yIndex, block.getTexture());
                 if ((rowOnGameBoard + yIndex) * BLOCK_SIZE < START_LINE)
                 {
@@ -124,7 +124,7 @@ void CollisionHandler::handleCompletedRows(Grid& tetronimo, Grid& gameBoard)
 bool CollisionHandler::checkForCompletedRow(int rowNum, Grid& gameBoard)
 {
     for (int xIndex = 0; xIndex < gameBoard.getWidth(); ++xIndex)
-    {   
+    {
         if (!gameBoard.getBlock(xIndex, rowNum).exists())
         {
             return false;
@@ -160,7 +160,7 @@ void CollisionHandler::setFlashingTexture(std::vector<size_t> completedRows,
     for (auto rowNum : completedRows)
     {
         for (auto xIndex = 0; xIndex < gameBoard.getWidth(); ++xIndex)
-        {   
+        {
             gameBoard.getBlock(xIndex, rowNum).setTexture(texture);
         }
     }
@@ -171,7 +171,7 @@ void CollisionHandler::setFlashingTexture(std::vector<size_t> completedRows,
 bool CollisionHandler::checkCollisions(Grid& tetronimo, Grid& gameBoard)
 {
     // find nearest whole number of blocks on game board
-    int rowOnGameBoard = (tetronimo.getPosY() / BLOCK_SIZE) + 1;
+    int rowOnGameBoard = (tetronimo.getPosY() / BLOCK_SIZE);
     int colOnGameBoard = (tetronimo.getPosX() / BLOCK_SIZE);
 
     for (int xIndex = 0; xIndex < tetronimo.getWidth(); ++xIndex)
@@ -191,8 +191,10 @@ bool CollisionHandler::checkCollisions(Grid& tetronimo, Grid& gameBoard)
                 {
                     return false;
                 }
-                // Check for an already frozen Tetronimo in the same position as the Block
-                if (gameBoard.getBlock(colOnGameBoard + xIndex, rowOnGameBoard + yIndex).exists())
+                // Check for an already frozen Tetronimo in the same grid squares as the Block
+                if (
+                    gameBoard.getBlock(colOnGameBoard + xIndex, rowOnGameBoard + yIndex).exists() || 
+                    gameBoard.getBlock(colOnGameBoard + xIndex, rowOnGameBoard + yIndex + 1).exists())
                 {
                     return false;
                 }
