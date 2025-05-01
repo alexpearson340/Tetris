@@ -10,15 +10,14 @@ Grid::Grid(int x, int y, size_t rows, size_t cols)
 }
 
 void Grid::createBlock(int xIndex, int yIndex, Texture* texture)
-{   
+{
     int blockX = mPosX + (xIndex * BLOCK_SIZE);
     int blockY = mPosY + (yIndex * BLOCK_SIZE);
     mGrid[yIndex][xIndex] = Block { blockX, blockY, texture };
 };
 
-
 Block& Grid::getBlock(size_t xIndex, size_t yIndex)
-{   
+{
     return mGrid[yIndex][xIndex];
 }
 
@@ -70,13 +69,11 @@ void Grid::move(int xMul, int yMul)
     int yMove = mVelY * yMul;
 
     // Move all the blocks
-    for (int xIndex = 0; xIndex < mCols; ++xIndex)
-    {
-        for (int yIndex = 0; yIndex < mRows; ++yIndex)
+    forEachBlock(
+        [xMove, yMove](Block& block, size_t, size_t)
         {
-            mGrid[yIndex][xIndex].move(xMove, yMove);
-        }
-    }
+            block.move(xMove, yMove);
+        });
 
     // Move the Grid ref along with the blocks
     mPosX += xMove;
@@ -115,13 +112,11 @@ void Grid::transpose()
 
 void Grid::updatePositions()
 {
-    for (int xIndex = 0; xIndex < mCols; ++xIndex)
-    {
-        for (int yIndex = 0; yIndex < mRows; ++yIndex)
+    forEachBlock(
+        [this](Block& block, size_t xIndex, size_t yIndex)
         {
-            mGrid[yIndex][xIndex].moveTo(mPosX + (xIndex * BLOCK_SIZE), mPosY + (yIndex * BLOCK_SIZE));
-        }
-    }
+            block.moveTo(mPosX + (xIndex * BLOCK_SIZE), mPosY + (yIndex * BLOCK_SIZE));
+        });
 }
 
 void Grid::moveRowsDown(size_t bottomRow, size_t nRowsToDelete)
@@ -134,16 +129,14 @@ void Grid::moveRowsDown(size_t bottomRow, size_t nRowsToDelete)
 
 void Grid::render()
 {
-    for (int xIndex = 0; xIndex < mCols; ++xIndex)
-    {
-        for (int yIndex = 0; yIndex < mRows; ++yIndex)
+    forEachBlock(
+        [](Block& block, size_t, size_t)
         {
-            if (mGrid[yIndex][xIndex].exists())
+            if (block.exists())
             {
-                mGrid[yIndex][xIndex].render();
-            };
-        }
-    }
+                block.render();
+            }
+        });
 }
 
 size_t Grid::getHeight()
