@@ -17,6 +17,19 @@ public:
     // Takes key presses and adjusts the Block's velocity
     void handleEvent(SDL_Event& e);
 
+    // Call a function on each block in the Grid
+    template <typename Func>
+    void forEachBlock(Func&& func)
+    {
+        for (int xIndex = 0; xIndex < mCols; ++xIndex)
+        {
+            for (int yIndex = 0; yIndex < mRows; ++yIndex)
+            {
+                func(mGrid[yIndex][xIndex], xIndex, yIndex);
+            }
+        }
+    }
+
     void move(int, int);
 
     void createBlock(int, int, Texture*);
