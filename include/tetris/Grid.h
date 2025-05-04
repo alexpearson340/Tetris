@@ -30,6 +30,23 @@ public:
         }
     }
 
+    // Check if any blocks in the Grid satisfy a conditon
+    template <typename Func>
+    bool anyBlocks(Func&& func)
+    {   
+        for (int xIndex = 0; xIndex < mCols; ++xIndex)
+        {
+            for (int yIndex = 0; yIndex < mRows; ++yIndex)
+            {
+                if (func(mGrid[yIndex][xIndex], xIndex, yIndex))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     void move(int, int);
 
     void createBlock(int, int, Texture*);
