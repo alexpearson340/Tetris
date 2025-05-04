@@ -34,7 +34,7 @@ private:
 
     void setFlashingTexture(std::vector<size_t>, Grid&, Texture*);
 
-    bool checkCollisions(Grid&, Grid&);
+    bool hasCollided(Grid&, Grid&);
 
     bool mKeepPlaying { true };
     std::vector<size_t> mCompletedRows;

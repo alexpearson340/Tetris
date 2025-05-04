@@ -39,7 +39,7 @@ void CollisionHandler::handleHorizontal(Grid& tetronimo, Grid& gameBoard)
 {
     // Move the block horizontally
     tetronimo.move(1, 0);
-    if (!checkCollisions(tetronimo, gameBoard))
+    if (hasCollided(tetronimo, gameBoard))
     {
         tetronimo.move(-1, 0);
     };
@@ -51,7 +51,7 @@ void CollisionHandler::handleRotational(Grid& tetronimo, Grid& gameBoard)
     if (tetronimo.shouldRotate())
     {
         tetronimo.rotateClockwise();
-        if (!checkCollisions(tetronimo, gameBoard))
+        if (hasCollided(tetronimo, gameBoard))
         {
             tetronimo.rotateAntiClockwise();
         }
@@ -62,7 +62,7 @@ bool CollisionHandler::handleVertical(Grid& tetronimo, Grid& gameBoard)
 {
     bool newTetronimoRequired = false;
     tetronimo.move(0, 1);
-    if (!checkCollisions(tetronimo, gameBoard))
+    if (hasCollided(tetronimo, gameBoard))
     {
         // freeze routine
         freezeTetronimo(tetronimo, gameBoard);
@@ -81,11 +81,9 @@ void CollisionHandler::freezeTetronimo(Grid& tetronimo, Grid& gameBoard)
     int rowOnGameBoard = tetronimo.getPosY() / BLOCK_SIZE;
     int colOnGameBoard = tetronimo.getPosX() / BLOCK_SIZE;
 
-    for (int xIndex = 0; xIndex < tetronimo.getWidth(); ++xIndex)
-    {
-        for (int yIndex = 0; yIndex < tetronimo.getHeight(); ++yIndex)
+    tetronimo.forEachBlock(
+        [this, &gameBoard, rowOnGameBoard, colOnGameBoard](Block& block, size_t xIndex, size_t yIndex)
         {
-            Block& block = tetronimo.getBlock(xIndex, yIndex);
             if (block.exists())
             {
                 gameBoard.createBlock(colOnGameBoard + xIndex, rowOnGameBoard + yIndex, block.getTexture());
@@ -95,7 +93,7 @@ void CollisionHandler::freezeTetronimo(Grid& tetronimo, Grid& gameBoard)
                 }
             }
         }
-    }
+    );
 }
 
 void CollisionHandler::handleCompletedRows(Grid& tetronimo, Grid& gameBoard)
@@ -168,38 +166,36 @@ void CollisionHandler::setFlashingTexture(std::vector<size_t> completedRows,
     mFlashRowTransitionTime = mCurrentTime + COMPLETED_ROW_FLASH_INTERVAL_MS;
 }
 
-bool CollisionHandler::checkCollisions(Grid& tetronimo, Grid& gameBoard)
+bool CollisionHandler::hasCollided(Grid& tetronimo, Grid& gameBoard)
 {
     // find nearest whole number of blocks on game board
     int rowOnGameBoard = (tetronimo.getPosY() / BLOCK_SIZE);
     int colOnGameBoard = (tetronimo.getPosX() / BLOCK_SIZE);
 
-    for (int xIndex = 0; xIndex < tetronimo.getWidth(); ++xIndex)
-    {
-        for (int yIndex = 0; yIndex < tetronimo.getHeight(); ++yIndex)
+    return tetronimo.anyBlocks(
+        [this, &gameBoard, rowOnGameBoard, colOnGameBoard] (Block& block, size_t xIndex, size_t yIndex)
         {
-            Block& block = tetronimo.getBlock(xIndex, yIndex);
             if (block.exists())
             {
                 // Check sides of screen
                 if ((block.getPosX() < 0) || ((block.getPosX() + BLOCK_SIZE) > SCREEN_WIDTH))
                 {
-                    return false;
+                    return true;
                 }
                 // Check top and bottom of playable area
                 if ((block.getPosY() < 0) || (block.getPosY() + BLOCK_SIZE) >= (N_ROWS * BLOCK_SIZE))
                 {
-                    return false;
+                    return true;
                 }
                 // Check for an already frozen Tetronimo in the same grid squares as the Block
                 if (
                     gameBoard.getBlock(colOnGameBoard + xIndex, rowOnGameBoard + yIndex).exists() || 
                     gameBoard.getBlock(colOnGameBoard + xIndex, rowOnGameBoard + yIndex + 1).exists())
                 {
-                    return false;
+                    return true;
                 }
             }
+            return false;
         }
-    }
-    return true;
+    );
 }
