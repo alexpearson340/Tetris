@@ -1,9 +1,8 @@
-#ifndef GAMEENGINE_H
-#define GAMEENGINE_H
+#ifndef BASEENGINE_H
+#define BASEENGINE_H
 
 #include "engine/Texture.h"
 #include <sstream>
-#include <unordered_map>
 
 inline constexpr SDL_Color BACKGROUND_COLOUR { 250, 250, 250, 255 };
 inline constexpr SDL_Color TEXT_COLOUR { 0, 0, 0, 255 };
@@ -11,22 +10,23 @@ inline constexpr int BOTTOM_BAR_HEIGHT { 24 };
 inline constexpr int FONT_SIZE = 18;
 
 // The game engine class
-class GameEngine
+class BaseEngine
 {
 public:
-    GameEngine(int, int);
-    virtual ~GameEngine();
+    BaseEngine(int, int);
+    virtual ~BaseEngine();
 
     // We dont support copy constructor, copy assignment, move constructor, move assignment
-    GameEngine(const GameEngine&) = delete;
-    GameEngine& operator=(const GameEngine&) = delete;
-    GameEngine(GameEngine&&) = delete;
-    GameEngine& operator=(GameEngine&&) = delete;
+    BaseEngine(const BaseEngine&) = delete;
+    BaseEngine& operator=(const BaseEngine&) = delete;
+    BaseEngine(BaseEngine&&) = delete;
+    BaseEngine& operator=(BaseEngine&&) = delete;
 
     // Entry point. Run the game
     int run(int argc, char* args[]);
 
 protected:
+
     const int mScreenHeight;
     const int mScreenWidth;
 
@@ -67,8 +67,8 @@ protected:
     SDL_Event mEvent;
 
     // States
-    bool mQuit; // exit the actual game window altogether
-    bool mPlaying; // the playable part of the game is running or not
+    bool mQuit;     // exit the actual game window altogether
+    bool mPlaying;  // the playable part of the game is running or not
 
     // Counters
     Uint32 mElapsedTime;

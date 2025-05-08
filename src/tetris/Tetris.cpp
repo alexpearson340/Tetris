@@ -2,7 +2,7 @@
 #include <iostream>
 
 TetrisGameEngine::TetrisGameEngine()
-    : GameEngine(SCREEN_HEIGHT, SCREEN_WIDTH)
+    : BaseEngine(SCREEN_HEIGHT, SCREEN_WIDTH)
     , mCurrentTetronimo { 0, 0, 0, 0 }
     , mGameBoard { 0, 0, 0, 0 }
     , mFactory { mTextures }

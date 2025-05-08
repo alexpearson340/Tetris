@@ -2,11 +2,11 @@
 #define TETRIS_H
 
 #include "tetris/CollisionHandler.h"
-#include "engine/GameEngine.h"
+#include "engine/BaseEngine.h"
 #include "tetris/Grid.h"
 #include "tetris/TetronimoFactory.h"
 
-class TetrisGameEngine : public GameEngine
+class TetrisGameEngine : public BaseEngine
 {
 public:
     TetrisGameEngine(); 

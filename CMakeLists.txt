@@ -41,7 +41,7 @@ include_directories(
 )
 
 add_library(engine_lib STATIC
-    src/engine/GameEngine.cpp
+    src/engine/BaseEngine.cpp
     src/engine/Texture.cpp
 )
 
