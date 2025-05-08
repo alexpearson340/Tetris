@@ -6,7 +6,7 @@
 #include <SDL_ttf.h>
 #include <string>
 
-// Texture wrapper class 
+// Texture wrapper class
 class Texture
 {
 public:

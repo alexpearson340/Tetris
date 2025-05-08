@@ -30,6 +30,7 @@ bool BaseEngine::init()
     bool success = true;
 
     // Initialize SDL
+    printf("Initialising SDL\n");
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
         printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
@@ -44,6 +45,7 @@ bool BaseEngine::init()
         }
 
         // Create window
+        printf("Creating SDL window\n");
         mWindow = SDL_CreateWindow("Tetris",
             SDL_WINDOWPOS_UNDEFINED,
             SDL_WINDOWPOS_UNDEFINED,
@@ -58,6 +60,7 @@ bool BaseEngine::init()
         else
         {
             // Create vsynced renderer for window
+            printf("Creating SDL renderer\n");
             mRenderer = SDL_CreateRenderer(
                 mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
             if (mRenderer == NULL)
@@ -72,6 +75,7 @@ bool BaseEngine::init()
                 SDL_SetRenderDrawColor(mRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 
                 // Initialize PNG loading
+                printf("Initialising SDL Image\n");
                 int imgFlags = IMG_INIT_PNG;
                 if (!(IMG_Init(imgFlags) & imgFlags))
                 {
@@ -81,6 +85,7 @@ bool BaseEngine::init()
                 }
 
                 // Initialize SDL_ttf
+                printf("Initialising SDL TTF\n");
                 if (TTF_Init() == -1)
                 {
                     printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n",
@@ -137,7 +142,7 @@ void BaseEngine::updateInformationBar()
     if (!mInfoBar.loadFromRenderedText(
             mInfoText.str().c_str(), TEXT_COLOUR, BACKGROUND_COLOUR))
     {
-        printf("Failed to load text texture");
+        printf("Failed to load text texture\n");
     }
 }
 
@@ -168,6 +173,7 @@ void BaseEngine::close()
 int BaseEngine::run(int argc, char* args[])
 {
     // Start up SDL and create window
+    printf("Initialising engine\n");
     if (!init())
     {
         printf("Failed to initialize!\n");
@@ -175,22 +181,26 @@ int BaseEngine::run(int argc, char* args[])
     else
     {
         // Load media
-        if (!loadMedia() && loadFont(FONT_ARIAL))
+        printf("Loading media\n");
+        if (!loadMedia() || !loadFont(FONT_ARIAL))
         {
             printf("Failed to load media!\n");
         }
         else
         {
             // Initialize the information bar text(ure)
+            printf("Initialising information bar\n");
             mInfoBar = Texture(mRenderer, mFont);
             updateInformationBar();
             mInfoText.str("");
             mElapsedTime = SDL_GetTicks();
 
             // Create the game state objects
+            printf("Creating game state objects\n");
             create();
 
             // While application is running
+            printf("Starting engine loop\n");
             while (!mQuit)
             {
                 // Increment counters
@@ -231,6 +241,7 @@ int BaseEngine::run(int argc, char* args[])
     }
 
     // Free resources and close SDL
+    printf("Shutting down engine\n");
     close();
     std::cout << "Finished cleanly" << '\n';
     return 0;
