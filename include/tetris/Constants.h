@@ -33,7 +33,4 @@ constexpr std::string_view BLOCK_TEXTURE_NAVY { "navy.bmp" };
 constexpr std::string_view BLOCK_TEXTURE_GREY { "grey.bmp" };
 constexpr std::string_view BLOCK_TEXTURE_WHITE { "white.bmp" };
 constexpr std::string_view BLOCK_TEXTURE_BLACK { "black.bmp" };
-
-constexpr std::string_view FONT_ARIAL { "Arial.ttf" };
-
 #endif // CONSTANTS_H

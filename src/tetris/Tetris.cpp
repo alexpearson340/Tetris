@@ -25,9 +25,6 @@ bool TetrisGameEngine::loadMedia()
     success = success && loadTexture(BLOCK_TEXTURE_GREY);
     success = success && loadTexture(BLOCK_TEXTURE_WHITE);
     success = success && loadTexture(BLOCK_TEXTURE_BLACK);
-
-    // Open the font
-    success = success && loadFont(FONT_ARIAL);
     return success;
 }
 

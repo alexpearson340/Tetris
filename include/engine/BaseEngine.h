@@ -8,6 +8,7 @@ inline constexpr SDL_Color BACKGROUND_COLOUR { 250, 250, 250, 255 };
 inline constexpr SDL_Color TEXT_COLOUR { 0, 0, 0, 255 };
 inline constexpr int BOTTOM_BAR_HEIGHT { 24 };
 inline constexpr int FONT_SIZE = 18;
+constexpr std::string_view FONT_ARIAL { "Arial.ttf" };
 
 // The game engine class
 class BaseEngine
