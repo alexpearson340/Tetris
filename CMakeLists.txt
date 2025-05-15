@@ -4,6 +4,9 @@ project(Tetris VERSION 1.0)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+include(CompilerWarnings)
+
 if(CMAKE_HOST_WIN32 )
   set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>") # Static linking
   set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
@@ -44,6 +47,7 @@ add_library(engine_lib STATIC
     src/engine/BaseEngine.cpp
     src/engine/Texture.cpp
 )
+set_project_warnings(engine_lib)
 
 add_library(tetris_lib STATIC 
     src/tetris/Block.cpp
@@ -52,10 +56,12 @@ add_library(tetris_lib STATIC
     src/tetris/Tetris.cpp
     src/tetris/TetronimoFactory.cpp
 )
+set_project_warnings(tetris_lib)
 
 add_executable(tetris_game 
     src/main.cpp
 )
+set_project_warnings(tetris_game)
 
 target_link_libraries(tetris_game
     engine_lib

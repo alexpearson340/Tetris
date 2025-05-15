@@ -21,9 +21,9 @@ public:
     template <typename Func>
     void forEachBlock(Func&& func)
     {
-        for (int xIndex = 0; xIndex < mCols; ++xIndex)
+        for (size_t xIndex = 0; xIndex < mCols; ++xIndex)
         {
-            for (int yIndex = 0; yIndex < mRows; ++yIndex)
+            for (size_t yIndex = 0; yIndex < mRows; ++yIndex)
             {
                 func(mGrid[yIndex][xIndex], xIndex, yIndex);
             }
@@ -34,9 +34,9 @@ public:
     template <typename Func>
     bool anyBlocks(Func&& func)
     {   
-        for (int xIndex = 0; xIndex < mCols; ++xIndex)
+        for (size_t xIndex = 0; xIndex < mCols; ++xIndex)
         {
-            for (int yIndex = 0; yIndex < mRows; ++yIndex)
+            for (size_t yIndex = 0; yIndex < mRows; ++yIndex)
             {
                 if (func(mGrid[yIndex][xIndex], xIndex, yIndex))
                 {
