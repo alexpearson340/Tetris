@@ -149,13 +149,8 @@ void BaseEngine::updateInformationBar()
 
 void BaseEngine::close()
 {
-    // Free loaded images
-    for (auto& pair : mTextures)
-    {
-        pair.second.reset();
-    }
-
     // Free resrources
+    mTextures.clear();
     mFont.reset();
     mRenderer.reset();
     mWindow.reset();
