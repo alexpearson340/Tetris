@@ -2,6 +2,7 @@
 
 #include "engine/BaseEngine.h"
 #include <cassert>
+#include <memory>
 
 BaseEngine::BaseEngine(const int screenHeight, const int screenWidth)
     : mScreenHeight { screenHeight }
@@ -46,12 +47,12 @@ bool BaseEngine::init()
 
         // Create window
         printf("Creating SDL window\n");
-        mWindow = SDL_CreateWindow("Tetris",
+        mWindow.reset(SDL_CreateWindow("Tetris",
             SDL_WINDOWPOS_UNDEFINED,
             SDL_WINDOWPOS_UNDEFINED,
             mScreenWidth,
             mScreenHeight,
-            SDL_WINDOW_SHOWN);
+            SDL_WINDOW_SHOWN));
         if (mWindow == NULL)
         {
             printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
@@ -61,8 +62,8 @@ bool BaseEngine::init()
         {
             // Create vsynced renderer for window
             printf("Creating SDL renderer\n");
-            mRenderer = SDL_CreateRenderer(
-                mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+            mRenderer.reset(SDL_CreateRenderer(
+                mWindow.get(), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC));
             if (mRenderer == NULL)
             {
                 printf("Renderer could not be created! SDL Error: %s\n",
@@ -72,7 +73,7 @@ bool BaseEngine::init()
             else
             {
                 // Initialize renderer color
-                SDL_SetRenderDrawColor(mRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+                SDL_SetRenderDrawColor(mRenderer.get(), 0xFF, 0xFF, 0xFF, 0xFF);
 
                 // Initialize PNG loading
                 printf("Initialising SDL Image\n");
@@ -111,8 +112,8 @@ bool BaseEngine::loadTexture(const std::string_view fileName)
     }
     else
     {
-        mTextures[fileName] = Texture { mRenderer };
-        if (!mTextures.at(fileName).loadFromFile(filePath))
+        mTextures.emplace(fileName, std::make_unique<Texture>(mRenderer.get()));
+        if (!mTextures.at(fileName)->loadFromFile(filePath))
         {
             printf("Failed to load %s image!\n", filePath.c_str());
             success = false;
@@ -126,7 +127,7 @@ bool BaseEngine::loadFont(const std::string_view fileName)
     bool success { true };
     std::string fontPath { std::string(ASSETS_DIR) + "/" + std::string(fileName) };
     printf("Loading %s\n", std::string(fileName).c_str());
-    mFont = TTF_OpenFont(fontPath.c_str(), FONT_SIZE);
+    mFont.reset(TTF_OpenFont(fontPath.c_str(), FONT_SIZE));
     if (mFont == NULL)
     {
         printf("Failed to load font! SDL_ttf Error: %s\n", TTF_GetError());
@@ -139,7 +140,7 @@ void BaseEngine::updateInformationBar()
 {
     mInfoText.str("");
     mInfoText << "  fps  " << mFps << "  |  score  " << mScore;
-    if (!mInfoBar.loadFromRenderedText(
+    if (!mInfoBar->loadFromRenderedText(
             mInfoText.str().c_str(), TEXT_COLOUR, BACKGROUND_COLOUR))
     {
         printf("Failed to load text texture\n");
@@ -149,20 +150,15 @@ void BaseEngine::updateInformationBar()
 void BaseEngine::close()
 {
     // Free loaded images
-    for (auto& pair : mTextures) 
+    for (auto& pair : mTextures)
     {
-        pair.second.free();
+        pair.second.reset();
     }
 
-    // Free global font
-    TTF_CloseFont(mFont);
-    mFont = NULL;
-
-    // Destroy window
-    SDL_DestroyRenderer(mRenderer);
-    SDL_DestroyWindow(mWindow);
-    mWindow = NULL;
-    mRenderer = NULL;
+    // Free resrources
+    mFont.reset();
+    mRenderer.reset();
+    mWindow.reset();
 
     // Quit SDL subsystems
     TTF_Quit();
@@ -190,7 +186,7 @@ int BaseEngine::run(int argc, char* args[])
         {
             // Initialize the information bar text(ure)
             printf("Initialising information bar\n");
-            mInfoBar = Texture(mRenderer, mFont);
+            mInfoBar = std::make_unique<Texture>(mRenderer.get(), mFont.get());
             updateInformationBar();
             mInfoText.str("");
             mElapsedTime = SDL_GetTicks();
@@ -217,11 +213,11 @@ int BaseEngine::run(int argc, char* args[])
                 update();
 
                 // Clear screen
-                SDL_SetRenderDrawColor(mRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-                SDL_RenderClear(mRenderer);
+                SDL_SetRenderDrawColor(mRenderer.get(), 0xFF, 0xFF, 0xFF, 0xFF);
+                SDL_RenderClear(mRenderer.get());
 
                 // Draw the information box
-                SDL_SetRenderDrawColor(mRenderer,
+                SDL_SetRenderDrawColor(mRenderer.get(),
                     BACKGROUND_COLOUR.r,
                     BACKGROUND_COLOUR.g,
                     BACKGROUND_COLOUR.b,
@@ -229,13 +225,13 @@ int BaseEngine::run(int argc, char* args[])
                 static SDL_Rect infoBoxRect = {
                     0, mScreenHeight - BOTTOM_BAR_HEIGHT, mScreenWidth, BOTTOM_BAR_HEIGHT
                 };
-                SDL_RenderFillRect(mRenderer, &infoBoxRect);
+                SDL_RenderFillRect(mRenderer.get(), &infoBoxRect);
 
                 // Render game state objects
                 render();
 
                 // Update screen
-                SDL_RenderPresent(mRenderer);
+                SDL_RenderPresent(mRenderer.get());
             }
         }
     }

@@ -33,8 +33,8 @@ bool TetrisGameEngine::create()
     mGameBoard = Grid(0, 0, N_ROWS, N_COLS);
     mGameBoard.updatePositions();
     mCollisionHandler = CollisionHandler(
-        &mTextures.at(BLOCK_TEXTURE_WHITE),
-        &mTextures.at(BLOCK_TEXTURE_BLACK),
+        mTextures.at(BLOCK_TEXTURE_WHITE).get(),
+        mTextures.at(BLOCK_TEXTURE_BLACK).get(),
         mElapsedTime);
     mCurrentTetronimo = mFactory.getNextTetronimo();
     return true;
@@ -75,12 +75,12 @@ bool TetrisGameEngine::update()
 bool TetrisGameEngine::render()
 {
     // Draw the start line
-    SDL_SetRenderDrawColor(mRenderer, 0xC8, 0xC8, 0xC8, 0xFF);
-    SDL_RenderDrawLine(mRenderer, 0, START_LINE, mScreenWidth, START_LINE);
+    SDL_SetRenderDrawColor(mRenderer.get(), 0xC8, 0xC8, 0xC8, 0xFF);
+    SDL_RenderDrawLine(mRenderer.get(), 0, START_LINE, mScreenWidth, START_LINE);
 
     // Render game state objects
     mGameBoard.render();
     mCurrentTetronimo.render();
-    mInfoBar.render(0, mScreenHeight - BOTTOM_BAR_HEIGHT);
+    mInfoBar->render(0, mScreenHeight - BOTTOM_BAR_HEIGHT);
     return true;
 }

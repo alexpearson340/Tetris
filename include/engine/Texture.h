@@ -6,6 +6,15 @@
 #include <SDL_ttf.h>
 #include <string>
 
+// Custom deleters for SDL resources
+struct SDLTextureDeleter
+{
+    void operator()(SDL_Texture* texture)
+    {
+        SDL_DestroyTexture(texture);
+    }
+};
+
 // Texture wrapper class
 class Texture
 {
@@ -25,14 +34,14 @@ public:
     bool loadFromRenderedText(std::string textureText, SDL_Color textColor, SDL_Color backgroundColour);
 
     // Deallocates texture
-    void free();
+    void reset();
 
     // Renders texture at given point
     void render(int x, int y, SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
 private:
     // The actual hardware texture
-    SDL_Texture* mTexture;
+    std::unique_ptr<SDL_Texture, SDLTextureDeleter> mTexture;
     SDL_Renderer* mRenderer;
     TTF_Font* mFont;
 

@@ -2,6 +2,7 @@
 #define BASEENGINE_H
 
 #include "engine/Texture.h"
+#include <memory>
 #include <sstream>
 
 inline constexpr SDL_Color BACKGROUND_COLOUR { 250, 250, 250, 255 };
@@ -9,6 +10,31 @@ inline constexpr SDL_Color TEXT_COLOUR { 0, 0, 0, 255 };
 inline constexpr int BOTTOM_BAR_HEIGHT { 24 };
 inline constexpr int FONT_SIZE = 18;
 constexpr std::string_view FONT_ARIAL { "Arial.ttf" };
+
+// Custom deleters for SDL resources
+struct SDLWindowDeleter
+{
+    void operator()(SDL_Window* window) const
+    {
+        SDL_DestroyWindow(window);
+    }
+};
+
+struct SDLRendererDeleter
+{
+    void operator()(SDL_Renderer* renderer) const
+    {
+        SDL_DestroyRenderer(renderer);
+    }
+};
+
+struct SDLFontDeleter
+{
+    void operator()(TTF_Font* font) const
+    {
+        TTF_CloseFont(font);
+    }
+};
 
 // The game engine class
 class BaseEngine
@@ -27,7 +53,6 @@ public:
     int run(int argc, char* args[]);
 
 protected:
-
     const int mScreenHeight;
     const int mScreenWidth;
 
@@ -50,26 +75,24 @@ protected:
     // Frees media and shuts down SDL
     void close();
 
-    // The window we'll be rendering to
-    SDL_Window* mWindow;
-
-    // The window renderer
-    SDL_Renderer* mRenderer;
+    // SDL resources
+    std::unique_ptr<SDL_Window, SDLWindowDeleter> mWindow;
+    std::unique_ptr<SDL_Renderer, SDLRendererDeleter> mRenderer;
 
     // textures and fonts
-    std::unordered_map<std::string_view, Texture> mTextures;
-    TTF_Font* mFont;
+    std::unordered_map<std::string_view, std::unique_ptr<Texture>> mTextures;
+    std::unique_ptr<TTF_Font, SDLFontDeleter> mFont;
 
     // A text texture displaying FPS, score, etc
-    Texture mInfoBar;
+    std::unique_ptr<Texture> mInfoBar;
     std::stringstream mInfoText;
 
     // Event handling
     SDL_Event mEvent;
 
     // States
-    bool mQuit;     // exit the actual game window altogether
-    bool mPlaying;  // the playable part of the game is running or not
+    bool mQuit; // exit the actual game window altogether
+    bool mPlaying; // the playable part of the game is running or not
 
     // Counters
     Uint32 mElapsedTime;

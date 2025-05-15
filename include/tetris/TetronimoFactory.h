@@ -2,6 +2,7 @@
 #define TETRONIMOFACTORY_H
 
 #include "tetris/Grid.h"
+#include <memory>
 #include <random>
 #include <unordered_map>
 
@@ -9,7 +10,7 @@
 class TetronimoFactory
 {
 public:
-    TetronimoFactory(std::unordered_map<std::string_view, Texture>&);
+    TetronimoFactory(std::unordered_map<std::string_view, std::unique_ptr<Texture>>&);
 
     Grid getNextTetronimo();
 
@@ -19,7 +20,7 @@ private:
     std::uniform_int_distribution<> mDis; // Uniform distribution
     const int mTetronimoStartX { TETRONIMO_START_X };
     const int mTetronimoStartY { TETRONIMO_START_Y };
-    std::unordered_map<std::string_view, Texture>& mTextures;
+    std::unordered_map<std::string_view, std::unique_ptr<Texture>>& mTextures;
 };
 
 #endif
