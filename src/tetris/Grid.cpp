@@ -121,9 +121,19 @@ void Grid::updatePositions()
 
 void Grid::moveRowsDown(size_t bottomRow, size_t nRowsToDelete)
 {
+    // Move rows down
     for (size_t r = bottomRow; r >= nRowsToDelete; r--)
     {
         mGrid[r] = mGrid[r - nRowsToDelete];
+    }
+    
+    // Clear the top rows that are now empty
+    for (size_t r = 0; r < nRowsToDelete; r++)
+    {
+        for (size_t c = 0; c < mCols; c++)
+        {
+            mGrid[r][c] = Block(); // Create empty block
+        }
     }
 }
 

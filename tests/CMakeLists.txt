@@ -6,14 +6,22 @@ add_executable(
   tetris_tests
   test_main.cpp
   test_block.cpp
+  test_grid.cpp
+  test_tetronimo_factory.cpp
+  test_collision_handler.cpp
 )
 
 target_link_libraries(
   tetris_tests
   GTest::gtest_main
+  tetris_lib
+  engine_lib
+  ${SDL2_LIBRARY}
+  ${SDL2_IMAGE_LIBRARY}
+  ${SDL2_TTF_LIBRARY}
 )
 
-target_include_directories(tetris_tests PRIVATE ${CMAKE_SOURCE_DIR})
+target_include_directories(tetris_tests PRIVATE ${CMAKE_SOURCE_DIR}/include)
 
 if(WIN32)
   add_custom_command(

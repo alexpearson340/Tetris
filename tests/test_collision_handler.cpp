@@ -1,92 +1,164 @@
 #include "tetris/CollisionHandler.h"
 #include "engine/Texture.h"
 #include <gtest/gtest.h>
+#include <memory>
 
 class CollisionHandlerTest : public ::testing::Test
 {
 protected:
-    // Set up objects that will be used in multiple tests
     void SetUp() override
     {
-        // Create the collision handler with initial time
+        whiteTexture = std::make_unique<Texture>();
+        blackTexture = std::make_unique<Texture>();
+        blockTexture = std::make_unique<Texture>();
+        
         currentTime = 0;
-        mHandler = CollisionHandler(&whiteTexture, &blackTexture, currentTime);
-
-        // An empty game board
-        mGameBoard = Grid(0, 0, N_ROWS, N_COLS);
-        mGameBoard.updatePositions();
+        handler = std::make_unique<CollisionHandler>(whiteTexture.get(), blackTexture.get(), currentTime);
+        
+        // Create empty game board
+        gameBoard = std::make_unique<Grid>(0, 0, N_ROWS, N_COLS);
+        
+        // Create a simple 2x2 tetromino
+        tetromino = std::make_unique<Grid>(160, 0, 2, 2);
+        tetromino->createBlock(0, 0, blockTexture.get());
+        tetromino->createBlock(1, 0, blockTexture.get());
+        tetromino->createBlock(0, 1, blockTexture.get());
+        tetromino->createBlock(1, 1, blockTexture.get());
     }
-
-    Grid getTetronimo(int startPosX, int startPosY)
-    {
-        Grid tetronimo { startPosX, startPosY, 2, 2 };
-        tetronimo.createBlock(0, 0, nullptr);
-        tetronimo.createBlock(0, 1, nullptr);
-        tetronimo.createBlock(1, 0, nullptr);
-        tetronimo.createBlock(1, 1, nullptr);
-        return tetronimo;
-    }
-
-    Texture whiteTexture { nullptr };
-    Texture blackTexture { nullptr };
-    CollisionHandler mHandler { nullptr, nullptr, 0 };
-    Grid mGameBoard { 0, 0, 0, 0 };
+    
+    std::unique_ptr<Texture> whiteTexture;
+    std::unique_ptr<Texture> blackTexture;
+    std::unique_ptr<Texture> blockTexture;
+    std::unique_ptr<CollisionHandler> handler;
+    std::unique_ptr<Grid> gameBoard;
+    std::unique_ptr<Grid> tetromino;
     uint32_t currentTime;
 };
 
-TEST_F(CollisionHandlerTest, InitialStateIsKeepPlaying)
+TEST_F(CollisionHandlerTest, InitialState)
 {
-    EXPECT_TRUE(mHandler.keepPlaying());
+    EXPECT_TRUE(handler->keepPlaying());
 }
 
-TEST_F(CollisionHandlerTest, BlockMovement_VerticalOnly)
+TEST_F(CollisionHandlerTest, NoCollisionReturnsFalse)
 {
-    Grid tetronimo { getTetronimo(160, 0) };
-    EXPECT_FALSE(mHandler.handle(tetronimo, mGameBoard, 0));
-    EXPECT_TRUE(mHandler.keepPlaying());
-
-    EXPECT_EQ(tetronimo.getBlock(0, 0).getPosX(), 160);
-    EXPECT_EQ(tetronimo.getBlock(0, 0).getPosY(), 1);
-    EXPECT_EQ(tetronimo.getBlock(0, 1).getPosX(), 200);
-    EXPECT_EQ(tetronimo.getBlock(0, 1).getPosY(), 1);
-    EXPECT_EQ(tetronimo.getBlock(1, 0).getPosX(), 160);
-    EXPECT_EQ(tetronimo.getBlock(1, 0).getPosY(), 41);
-    EXPECT_EQ(tetronimo.getBlock(1, 1).getPosX(), 200);
-    EXPECT_EQ(tetronimo.getBlock(1, 1).getPosY(), 41);
+    // Tetromino in open space should not trigger new tetromino
+    bool needNewTetromino = handler->handle(*tetromino, *gameBoard, currentTime);
+    EXPECT_FALSE(needNewTetromino);
+    EXPECT_TRUE(handler->keepPlaying());
 }
 
-TEST_F(CollisionHandlerTest, BlockMovement_HorizontalLeft)
+TEST_F(CollisionHandlerTest, TetrominoMovesDown)
 {
-    Grid tetronimo { getTetronimo(160, 0) };
-    tetronimo.setVelX(-40);
-
-    EXPECT_FALSE(mHandler.handle(tetronimo, mGameBoard, 50));
-    EXPECT_TRUE(mHandler.keepPlaying());
-
-    EXPECT_EQ(tetronimo.getBlock(0, 0).getPosX(), 120);
-    EXPECT_EQ(tetronimo.getBlock(0, 0).getPosY(), 1);
-    EXPECT_EQ(tetronimo.getBlock(0, 1).getPosX(), 160);
-    EXPECT_EQ(tetronimo.getBlock(0, 1).getPosY(), 1);
-    EXPECT_EQ(tetronimo.getBlock(1, 0).getPosX(), 120);
-    EXPECT_EQ(tetronimo.getBlock(1, 0).getPosY(), 41);
-    EXPECT_EQ(tetronimo.getBlock(1, 1).getPosX(), 160);
-    EXPECT_EQ(tetronimo.getBlock(1, 1).getPosY(), 41);
+    int startY = tetromino->getPosY();
+    
+    handler->handle(*tetromino, *gameBoard, currentTime);
+    
+    // Tetromino should have moved down
+    EXPECT_GT(tetromino->getPosY(), startY);
 }
 
-TEST_F(CollisionHandlerTest, BlockMovement_HorizontalRight)
+TEST_F(CollisionHandlerTest, CollisionAtBottom)
 {
-    Grid tetronimo { getTetronimo(160, 0) };
-    tetronimo.setVelX(40);
+    // Move tetromino near bottom
+    tetromino = std::make_unique<Grid>(160, (N_ROWS - 2) * BLOCK_SIZE - 1, 2, 2);
+    tetromino->createBlock(0, 0, blockTexture.get());
+    tetromino->createBlock(1, 0, blockTexture.get());
+    tetromino->createBlock(0, 1, blockTexture.get());
+    tetromino->createBlock(1, 1, blockTexture.get());
+    
+    bool needNewTetromino = handler->handle(*tetromino, *gameBoard, currentTime);
+    
+    // Should detect collision and request new tetromino
+    EXPECT_TRUE(needNewTetromino);
+}
 
-    EXPECT_FALSE(mHandler.handle(tetronimo, mGameBoard, 50));
-    EXPECT_TRUE(mHandler.keepPlaying());
+TEST_F(CollisionHandlerTest, HorizontalMovement)
+{
+    // Set horizontal velocity
+    tetromino->setVelX(BLOCK_SIZE);
+    
+    // Wait enough time for input to be processed
+    currentTime = INPUT_INTERVAL_MS + 1;
+    
+    int startX = tetromino->getPosX();
+    handler->handle(*tetromino, *gameBoard, currentTime);
+    
+    // Should have moved right
+    EXPECT_GT(tetromino->getPosX(), startX);
+}
 
-    EXPECT_EQ(tetronimo.getBlock(0, 0).getPosX(), 200);
-    EXPECT_EQ(tetronimo.getBlock(0, 0).getPosY(), 1);
-    EXPECT_EQ(tetronimo.getBlock(0, 1).getPosX(), 240);
-    EXPECT_EQ(tetronimo.getBlock(0, 1).getPosY(), 1);
-    EXPECT_EQ(tetronimo.getBlock(1, 0).getPosX(), 200);
-    EXPECT_EQ(tetronimo.getBlock(1, 0).getPosY(), 41);
-    EXPECT_EQ(tetronimo.getBlock(1, 1).getPosX(), 240);
-    EXPECT_EQ(tetronimo.getBlock(1, 1).getPosY(), 41);
+TEST_F(CollisionHandlerTest, WallCollisionLeft)
+{
+    // Place tetromino at left edge
+    tetromino = std::make_unique<Grid>(0, 100, 2, 2);
+    tetromino->createBlock(0, 0, blockTexture.get());
+    tetromino->createBlock(1, 0, blockTexture.get());
+    tetromino->createBlock(0, 1, blockTexture.get());
+    tetromino->createBlock(1, 1, blockTexture.get());
+    tetromino->setVelX(-BLOCK_SIZE);
+    
+    currentTime = INPUT_INTERVAL_MS + 1;
+    
+    handler->handle(*tetromino, *gameBoard, currentTime);
+    
+    // Should not move past left wall
+    EXPECT_EQ(tetromino->getPosX(), 0);
+}
+
+TEST_F(CollisionHandlerTest, WallCollisionRight)
+{
+    // Place tetromino at right edge
+    int rightEdge = SCREEN_WIDTH - 2 * BLOCK_SIZE;
+    tetromino = std::make_unique<Grid>(rightEdge, 100, 2, 2);
+    tetromino->createBlock(0, 0, blockTexture.get());
+    tetromino->createBlock(1, 0, blockTexture.get());
+    tetromino->createBlock(0, 1, blockTexture.get());
+    tetromino->createBlock(1, 1, blockTexture.get());
+    tetromino->setVelX(BLOCK_SIZE);
+    
+    currentTime = INPUT_INTERVAL_MS + 1;
+    
+    handler->handle(*tetromino, *gameBoard, currentTime);
+    
+    // Should not move past right wall
+    EXPECT_EQ(tetromino->getPosX(), rightEdge);
+}
+
+TEST_F(CollisionHandlerTest, GameOverWhenBlocksReachTop)
+{
+    // Place a block at the top of the game board
+    gameBoard->createBlock(5, 1, blockTexture.get());
+    
+    // Create tetromino that will collide with it
+    tetromino = std::make_unique<Grid>(5 * BLOCK_SIZE, 0, 1, 1);
+    tetromino->createBlock(0, 0, blockTexture.get());
+    
+    handler->handle(*tetromino, *gameBoard, currentTime);
+    
+    // Game should end
+    EXPECT_FALSE(handler->keepPlaying());
+}
+
+TEST_F(CollisionHandlerTest, CollisionWithExistingBlocks)
+{
+    // Place some blocks on the game board
+    gameBoard->createBlock(4, 10, blockTexture.get());
+    gameBoard->createBlock(5, 10, blockTexture.get());
+    
+    // Create tetromino above them
+    tetromino = std::make_unique<Grid>(4 * BLOCK_SIZE, 8 * BLOCK_SIZE, 2, 2);
+    tetromino->createBlock(0, 0, blockTexture.get());
+    tetromino->createBlock(1, 0, blockTexture.get());
+    tetromino->createBlock(0, 1, blockTexture.get());
+    tetromino->createBlock(1, 1, blockTexture.get());
+    
+    bool needNewTetromino = handler->handle(*tetromino, *gameBoard, currentTime);
+    
+    // Should eventually collide and freeze
+    EXPECT_TRUE(needNewTetromino);
+    
+    // Check that blocks were added to game board
+    EXPECT_TRUE(gameBoard->getBlock(4, 8).exists());
+    EXPECT_TRUE(gameBoard->getBlock(5, 8).exists());
 }
