@@ -10,8 +10,6 @@ BaseEngine::BaseEngine(const int screenHeight, const int screenWidth)
     , mWindow { nullptr }
     , mRenderer { nullptr }
     , mFont { nullptr }
-    , mInfoBar {}
-    , mInfoText {}
     , mQuit { false }
     , mPlaying { true }
     , mElapsedTime { 0 }
@@ -136,16 +134,6 @@ bool BaseEngine::loadFont(const std::string_view fileName)
     return success;
 }
 
-void BaseEngine::updateInformationBar()
-{
-    mInfoText.str("");
-    mInfoText << "  fps  " << mFps << "  |  score  " << mScore;
-    if (!mInfoBar->loadFromRenderedText(
-            mInfoText.str().c_str(), TEXT_COLOUR, BACKGROUND_COLOUR))
-    {
-        printf("Failed to load text texture\n");
-    }
-}
 
 void BaseEngine::close()
 {
@@ -179,11 +167,6 @@ int BaseEngine::run(int argc, char* args[])
         }
         else
         {
-            // Initialize the information bar text(ure)
-            printf("Initialising information bar\n");
-            mInfoBar = std::make_unique<Texture>(mRenderer.get(), mFont.get());
-            updateInformationBar();
-            mInfoText.str("");
             mElapsedTime = SDL_GetTicks();
 
             // Create the game state objects
@@ -201,7 +184,6 @@ int BaseEngine::run(int argc, char* args[])
                     mFps = mFrameCount;
                     mFrameCount = 0;
                     mElapsedTime = SDL_GetTicks();
-                    updateInformationBar();
                 }
 
                 // Update game state objects

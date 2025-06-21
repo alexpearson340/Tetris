@@ -5,6 +5,7 @@
 #include "engine/BaseEngine.h"
 #include "tetris/Grid.h"
 #include "tetris/TetronimoFactory.h"
+#include <sstream>
 
 class TetrisGameEngine : public BaseEngine
 {
@@ -17,10 +18,17 @@ private:
     bool update() override;
     bool render() override;
 
+    // Updates the information bar texture text
+    void updateInformationBar();
+
     Grid mCurrentTetronimo;
     Grid mGameBoard;
     TetronimoFactory mFactory;
     CollisionHandler mCollisionHandler;
+
+    // A text texture displaying FPS, score, etc
+    std::unique_ptr<Texture> mInfoBar;
+    std::stringstream mInfoText;
 };
 
 #endif

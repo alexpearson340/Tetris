@@ -6,7 +6,9 @@ TetrisGameEngine::TetrisGameEngine()
     , mCurrentTetronimo { 0, 0, 0, 0 }
     , mGameBoard { 0, 0, 0, 0 }
     , mFactory { mTextures }
-    , mCollisionHandler { nullptr, nullptr, 0 } {
+    , mCollisionHandler { nullptr, nullptr, 0 }
+    , mInfoBar {}
+    , mInfoText {} {
     };
 
 bool TetrisGameEngine::loadMedia()
@@ -37,11 +39,29 @@ bool TetrisGameEngine::create()
         mTextures.at(BLOCK_TEXTURE_BLACK).get(),
         mElapsedTime);
     mCurrentTetronimo = mFactory.getNextTetronimo();
+    
+    // Initialize the information bar text(ure)
+    mInfoBar = std::make_unique<Texture>(mRenderer.get(), mFont.get());
+    updateInformationBar();
+    
     return true;
+}
+
+void TetrisGameEngine::updateInformationBar()
+{
+    mInfoText.str("");
+    mInfoText << "  fps  " << mFps << "  |  score  " << mScore;
+    if (!mInfoBar->loadFromRenderedText(
+            mInfoText.str().c_str(), TEXT_COLOUR, BACKGROUND_COLOUR))
+    {
+        printf("Failed to load text texture\n");
+    }
 }
 
 bool TetrisGameEngine::update()
 {
+    updateInformationBar();
+    
     // Handle events on queue
     while (SDL_PollEvent(&mEvent) != 0)
     {

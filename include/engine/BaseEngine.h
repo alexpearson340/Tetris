@@ -3,7 +3,6 @@
 
 #include "engine/Texture.h"
 #include <memory>
-#include <sstream>
 
 inline constexpr SDL_Color BACKGROUND_COLOUR { 250, 250, 250, 255 };
 inline constexpr SDL_Color TEXT_COLOUR { 0, 0, 0, 255 };
@@ -69,8 +68,6 @@ protected:
     bool loadTexture(const std::string_view);
     bool loadFont(const std::string_view);
 
-    // Updates the information bar texture text
-    void updateInformationBar();
 
     // Frees media and shuts down SDL
     void close();
@@ -82,10 +79,6 @@ protected:
     // textures and fonts
     std::unordered_map<std::string_view, std::unique_ptr<Texture>> mTextures;
     std::unique_ptr<TTF_Font, SDLFontDeleter> mFont;
-
-    // A text texture displaying FPS, score, etc
-    std::unique_ptr<Texture> mInfoBar;
-    std::stringstream mInfoText;
 
     // Event handling
     SDL_Event mEvent;
